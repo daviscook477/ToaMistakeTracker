@@ -23,7 +23,7 @@ dependencies {
 	testImplementation group: 'net.runelite', name:'jshell', version: runeLiteVersion
 }
 
-group = 'com.toamistaketracker'
+group = 'com.coxmistaketracker'
 version = '1.4'
 sourceCompatibility = '1.8'
 
