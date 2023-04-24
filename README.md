@@ -37,14 +37,9 @@ Current mistakes being tracked:
 Need to check
 * What happens when trasmoging the projectiles to toa ones? Is the prayer orb projectile id maintained?
 * does the olm get a different set of animation ids when it's glowing?
-* Shamans goo gfx
 * Does the olm falling crystal have some gfx appear on the tick it deals damage? yes -> great use that, no -> probably use the projectile id
 * What is the falling crystal projectile id vs gfx id
-* Is there really nothing that can tell me the player got teleported animation/gfx-wise? I don't think there's a difference between teleporting 2 tiles
-  versus just moving the 2 tiles on the same tick teleports occurs (unless the game prevents you from moving on the tick there's teleports in which case
-* we could use any player movement on that tick as an indicator that they messed up)
 * Why isn't the crystal burst detection working?
-* What about getting a list of NPC ids so I can properly detect rooms
 
 
 Are these done correctly?
@@ -54,7 +49,7 @@ Are these done correctly?
 * **Olm crystal bomb** damage 29766 40gfx
 
 
-
+1114a
 
 Finished:
 * **Olm crystal burst** occurs - not always a mistake but worth tracking - counted by phase (ex. 1, 2, 3, head for <8 players) 30033o (create) 30334o (burst) 1114a for the player

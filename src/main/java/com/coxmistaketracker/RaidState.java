@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class RaidState {
 
-    private static final Set<Integer> COX_REGION_IDS = ImmutableSet.of(13136, 13137, 13138, 13139, 13140, 13141, 13145, 13393, 13394, 13395, 13396, 13397, 13401, 12889);
+    public static final Set<Integer> COX_REGION_IDS = ImmutableSet.of(13136, 13137, 13138, 13139, 13140, 13141, 13145, 13393, 13394, 13395, 13396, 13397, 13401, 12889);
     private static final String START_RAID_MESSAGE = "The raid has begun!";
 
     private final Client client;

@@ -11,6 +11,7 @@ public enum RaidRoom {
 
     OLM(ImmutableSet.of(7550, 7551, 7552, 7553, 7554, 7555)),
     ICE_DEMON(ImmutableSet.of(7584, 7585)),
+    CRABS(ImmutableSet.of(7576, 7577, 7578, 7579)),
     SHAMANS(ImmutableSet.of(7573, 7574)),
     MUTTADILES(ImmutableSet.of(7561, 7562, 7563)),
     MYSTICS(ImmutableSet.of(7604, 7605, 7606)),

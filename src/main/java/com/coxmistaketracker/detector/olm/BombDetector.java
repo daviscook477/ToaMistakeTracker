@@ -54,7 +54,8 @@ public class BombDetector extends BaseMistakeDetector {
     public List<CoxMistake> detectMistakes(@NonNull Raider raider) {
         List<CoxMistake> mistakes = new ArrayList<>();
 
-        if (bombExplodedTiles.contains(raider.getPreviousWorldLocation())) {
+        // the gfx appears on the tick the damage is applied so use the current location
+        if (bombExplodedTiles.contains(raider.getCurrentWorldLocation())) {
             mistakes.add(CoxMistake.OLM_CRYSTAL_BOMB_EXPLOSION);
         }
 

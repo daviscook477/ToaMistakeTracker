@@ -2,13 +2,15 @@ package com.coxmistaketracker.detector.olm;
 
 import com.coxmistaketracker.CoxMistake;
 import com.coxmistaketracker.RaidRoom;
+import com.coxmistaketracker.RaidState;
 import com.coxmistaketracker.Raider;
 import com.coxmistaketracker.detector.BaseMistakeDetector;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.api.Player;
 import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.GameObjectSpawned;
-import net.runelite.api.events.GameTick;
 import net.runelite.api.events.GraphicsObjectCreated;
 import net.runelite.client.eventbus.Subscribe;
 
@@ -44,7 +46,10 @@ public class SpecialDetector extends BaseMistakeDetector {
     private static final int CRYSTALS_GAME_OBJECT_ID = 30033;
     private static final int LIGHTNING_GRAPHICS_OBJECT_ID = 1356;
     private static final int TELEPORTS_GRAPHICS_OBJECT_ID = 1359;
-    private static final int CRYSTALS_EXPLODED_GRAPHICS_OBJECT_ID = 1338;
+    private static final int CRYSTALS_EXPLODED_ANIMATION_ID = 1114;
+
+    private static final int TELEPORTS_Y_MIN = 5154;
+    private static final int TELEPORTS_Y_MAX = 5172;
 
     /**
      * This needs to be long enough to cover the time beteween teleports starting and teleports ending, but not too long
@@ -52,7 +57,7 @@ public class SpecialDetector extends BaseMistakeDetector {
      */
     private static final int TELEPORTS_COOLDOWN_TICKS = 20;
 
-    private final Set<WorldPoint> crystalsExplodedTiles;
+    private final Set<String> raidersHitByCrystals;
     private final Set<WorldPoint> lightningDangerTiles;
 
 
@@ -70,7 +75,7 @@ public class SpecialDetector extends BaseMistakeDetector {
         currentLightning = false;
         teleports = false;
         lastTeleportsTick = 0;
-        crystalsExplodedTiles = new HashSet<>();
+        raidersHitByCrystals = new HashSet<>();
         lightningDangerTiles = new HashSet<>();
     }
 
@@ -82,7 +87,7 @@ public class SpecialDetector extends BaseMistakeDetector {
         currentLightning = false;
         teleports = false;
         lastTeleportsTick = 0;
-        crystalsExplodedTiles.clear();
+        raidersHitByCrystals.clear();
         lightningDangerTiles.clear();
     }
 
@@ -105,22 +110,22 @@ public class SpecialDetector extends BaseMistakeDetector {
             mistakes.add(CoxMistake.OLM_SPECIAL_TELEPORTS_OCCURS);
         }
 
-        if (crystalsExplodedTiles.size() > 0) {
-            log.debug("Raider " + raider.getName() + " was at position " + raider.getPreviousWorldLocation() + " but the crystal explosion was on " + crystalsExplodedTiles.toArray()[0]);
-        }
-        if (crystalsExplodedTiles.contains(raider.getPreviousWorldLocation())) {
+        if (raidersHitByCrystals.contains(raider.getName())) {
             mistakes.add(CoxMistake.OLM_SPECIAL_CRYSTALS_DAMAGE);
         }
         if (lightningDangerTiles.contains(raider.getPreviousWorldLocation())) {
             mistakes.add(CoxMistake.OLM_SPECIAL_LIGHTNING_DAMAGE);
         }
+
         // HACK
         // Normally a player cannot move > 2 tiles in 1 tick. Although teleports can teleport the player 1 or 2 tiles, I haven't figured out a way
         // to uniquely detect that so instead only trigger this mistake when the player moves > 2 tiles in a tick which is definitely a teleport
-
         WorldPoint currentLocation = raider.getCurrentWorldLocation();
         WorldPoint previousLocation = raider.getPreviousWorldLocation();
-        if (currentLocation != null && previousLocation != null && (Math.abs(raider.getCurrentWorldLocation().getX() - raider.getPreviousWorldLocation().getX()) > 2 || Math.abs(raider.getCurrentWorldLocation().getY() - raider.getPreviousWorldLocation().getY()) > 2)) {
+        if (currentLocation != null && previousLocation != null
+        && (Math.abs(raider.getCurrentWorldLocation().getX() - raider.getPreviousWorldLocation().getX()) > 2 || Math.abs(raider.getCurrentWorldLocation().getY() - raider.getPreviousWorldLocation().getY()) > 2)
+        && raider.getCurrentWorldLocation().getY() >= TELEPORTS_Y_MIN && raider.getCurrentWorldLocation().getY() <= TELEPORTS_Y_MAX
+        && RaidState.COX_REGION_IDS.contains(raider.getCurrentWorldLocation().getRegionID())) {
             mistakes.add(CoxMistake.OLM_SPECIAL_TELEPORTS_DAMAGE);
         }
 
@@ -134,7 +139,7 @@ public class SpecialDetector extends BaseMistakeDetector {
         currentLightning = false;
         lightning = false;
         teleports = false;
-        crystalsExplodedTiles.clear();
+        raidersHitByCrystals.clear();
         lightningDangerTiles.clear();
     }
 
@@ -146,6 +151,15 @@ public class SpecialDetector extends BaseMistakeDetector {
     }
 
     @Subscribe
+    public void onAnimationChanged(AnimationChanged event) {
+        if (!(event.getActor() instanceof Player) || event.getActor().getAnimation() != CRYSTALS_EXPLODED_ANIMATION_ID || !raidState.isRaider(event.getActor())) {
+            return;
+        }
+
+        raidersHitByCrystals.add(event.getActor().getName());
+    }
+
+    @Subscribe
     public void onGraphicsObjectCreated(GraphicsObjectCreated event) {
         int currentTeleportsTick = client.getTickCount();
         // leading edge detector - only counts when going from no lightning to lightning
@@ -153,13 +167,11 @@ public class SpecialDetector extends BaseMistakeDetector {
             currentLightning = true;
             if (!lastLightning) {
                 lightning = true;
-                lightningDangerTiles.add(getWorldPoint(event.getGraphicsObject()));
             }
+            lightningDangerTiles.add(getWorldPoint(event.getGraphicsObject()));
         } else if (event.getGraphicsObject().getId() == TELEPORTS_GRAPHICS_OBJECT_ID && (currentTeleportsTick - lastTeleportsTick) >= TELEPORTS_COOLDOWN_TICKS) {
             teleports = true;
             lastTeleportsTick = currentTeleportsTick;
-        } else if (event.getGraphicsObject().getId() == CRYSTALS_EXPLODED_GRAPHICS_OBJECT_ID) {
-            crystalsExplodedTiles.add(getWorldPoint(event.getGraphicsObject()));
         }
     }
 

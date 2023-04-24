@@ -30,6 +30,7 @@ public class DeathDetector extends BaseMistakeDetector {
 
     private static final Map<RaidRoom, CoxMistake> ROOM_DEATHS = ImmutableMap.<RaidRoom, CoxMistake>builder()
             .put(RaidRoom.ICE_DEMON, DEATH_ICE_DEMON)
+            .put(RaidRoom.CRABS, DEATH_CRABS)
             .put(RaidRoom.SHAMANS, DEATH_SHAMANS)
             .put(RaidRoom.MUTTADILES, DEATH_MUTTADILES)
             .put(RaidRoom.MYSTICS, DEATH_MYSTICS)

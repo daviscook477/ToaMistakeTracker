@@ -146,6 +146,7 @@ public class CoxMistakeTrackerPlugin extends Plugin {
             if (raider != null) {
                 detect(raider);
             }
+            log.debug("player " + raider.getName() + " position " + raider.getPlayer().getWorldLocation());
         }
     }
 

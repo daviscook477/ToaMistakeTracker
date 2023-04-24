@@ -38,6 +38,8 @@ public class HealDetector extends BaseMistakeDetector {
     private final static Set<Integer> RIGHT_CLAW_IDS = ImmutableSet.of(7550, 7553);
     private final static Set<Integer> LEFT_CLAW_IDS = ImmutableSet.of(7552, 7555);
     private final static Set<Integer> OLM_PARTS_IDS = new HashSet<>();
+    private static final int RESET_Y_MIN = 5154;
+    private static final int RESET_Y_MAX = 5172;
 
     static {
         OLM_PARTS_IDS.addAll(OLM_IDS);
@@ -81,7 +83,9 @@ public class HealDetector extends BaseMistakeDetector {
             mistakes.add(CoxMistake.OLM_LEFT_CLAW_HEAL);
         }
 
-        if (!intersects(spawnedOlmParts, OLM_IDS) && (intersects(spawnedOlmParts, RIGHT_CLAW_IDS) || intersects(spawnedOlmParts, LEFT_CLAW_IDS))) {
+        if (!intersects(spawnedOlmParts, OLM_IDS)
+        && (intersects(spawnedOlmParts, RIGHT_CLAW_IDS) || intersects(spawnedOlmParts, LEFT_CLAW_IDS))
+        && raider.getCurrentWorldLocation().getY() >= RESET_Y_MIN && raider.getCurrentWorldLocation().getY() <= RESET_Y_MAX) {
             mistakes.add(CoxMistake.OLM_CLAW_RESET);
         }
 
