@@ -24,29 +24,41 @@ Current mistakes being tracked:
 * **Olm falling crystal** (Crystal Phase) damage
 * falling crystal attack 1353gfx 1447
 
-* **Lizardman Shamans poison blob** damage 1293p
+
 * **Lizardman Shamans spawn** damage
-* **Muttadiles baby** reset
-* **Muttadiles mother** reset
-* **Tekton** trap underneath
-* **Vanguards** off-prayer damage "I'm getting stacked out"
-* **Vanguards** reset
-* **Vespula soldier** spawn
+
+* **Tekton** trap underneath -> not doing this
+* **Vanguards** off-prayer damage "I'm getting stacked out" -> not doing this
+
+* **Vespula soldier** spawn -> I want to model export a lux grub for this to use as the icon but I want to check for the vespine solider npc id spawning to determint the mistake
 
 
 Need to check
 * What happens when trasmoging the projectiles to toa ones? Is the prayer orb projectile id maintained?
 * does the olm get a different set of animation ids when it's glowing?
-* Does the olm falling crystal have some gfx appear on the tick it deals damage? yes -> great use that, no -> probably use the projectile id
-* What is the falling crystal projectile id vs gfx id
-* Why isn't the crystal burst detection working?
+
+* I really need to setup a way to track team mistakes since the following mistakes shouldn't be for individual players
+* I don't think the guardians boulder is registering on the right tick. wait no I think I'm just an idiot and made is a 3x3
+  need to check to see whether it really is a 3x3 or if it's only the one tile.
+* **Vanguards** reset
+* why isn't the teleport damage mistake being tracked right? 
+* what is vasa's npc id before waking up since that's what I'll have to use to change the room id
+
+Team mistakes:
+* muttadile heal (big and small)
+* vanguards reset
+* olm center
+* olm special occurs
+* olm hand reset
+
+For team mistakes I really want to have the chat message appear over the enemies rather than every individual team member.
 
 
 Are these done correctly?
-* **Olm melee hand** heal 29887ID
+* **Olm melee hand** heal 29887ID -> doesn't seem like the tracker I was doing there worked
 * **Olm mage hand** reset 29884id
 * **Olm melee hand** reset
-* **Olm crystal bomb** damage 29766 40gfx
+
 
 
 1114a
@@ -64,7 +76,14 @@ Finished:
 * **Guardians boulder** damage 645p 305gfx
 * **Olm falling crystal** (Transition Phase) damage 1357 1358 1447gfx 1357gfx / 1358gfx falling crystal beetween first phases
 * **Olm falling crystal** (Head Phase) damage 1353gfx falling crystal attack
-
+* **Lizardman Shamans poison blob** damage 1293p
+* **Muttadiles baby** reset
+* **Muttadiles mother** reset
+* Does the logic for only counting ice demon/vasa mistakes if the hit is > 0 work? yes!!
+* **Olm crystal bomb** damage 29766 40gfx
+* Does the olm falling crystal have some gfx appear on the tick it deals damage? yes -> great use that, no -> probably use the projectile id
+* What is the falling crystal projectile id vs gfx id
+* Why isn't the crystal burst detection working? -> the gfx appears after the player has already been pushed to a different tile so now I just detect it with the animation change
 
 Issues: Taking damage is sometimes not a mistake (though I think this is exclusively dependent on whether or not vengeance is up)
 

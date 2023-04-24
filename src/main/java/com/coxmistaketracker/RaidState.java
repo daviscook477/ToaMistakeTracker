@@ -89,8 +89,9 @@ public class RaidState {
 
     @Subscribe
     public void onNpcSpawned(NpcSpawned event) {
+        if (event.getNpc() == null) return;
+
         int npcId = event.getNpc().getId();
-        log.debug("spawned npc id " + npcId);
         RaidRoom prevRoom = currentRoom;
         RaidRoom newRoom = RaidRoom.forNpcId(npcId);
         if (newRoom != null && newRoom != prevRoom) {
@@ -143,7 +144,6 @@ public class RaidState {
                 eventBus.post(new InRaidChanged(newInRaid));
             }
             inRaid = newInRaid;
-            return;
         }
     }
 

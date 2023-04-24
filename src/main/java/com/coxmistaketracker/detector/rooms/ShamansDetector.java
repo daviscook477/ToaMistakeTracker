@@ -4,7 +4,6 @@ import com.coxmistaketracker.CoxMistake;
 import com.coxmistaketracker.RaidRoom;
 import com.coxmistaketracker.Raider;
 import com.coxmistaketracker.detector.BaseMistakeDetector;
-import com.coxmistaketracker.detector.tracker.GroundProjectileTracker;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.coords.WorldPoint;
@@ -18,8 +17,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Shamans hit with a green goo attack projectile so wait for the projectile to hit and then see which players
- * were in range of it using the link {@link GroundProjectileTracker}
+ * Shamans hit with a green goo attack projectile that makes a graphics object when it hits so when the graphics object appears
+ * check for players within the hit radius on the current tick.
  */
 @Slf4j
 @Singleton

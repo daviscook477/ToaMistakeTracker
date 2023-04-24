@@ -8,11 +8,13 @@ import com.coxmistaketracker.detector.BaseMistakeDetector;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Player;
+import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.GameObjectSpawned;
 import net.runelite.api.events.GraphicsObjectCreated;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.util.Text;
 
 import javax.inject.Singleton;
 import java.util.ArrayList;
@@ -54,6 +56,8 @@ public class SpecialDetector extends BaseMistakeDetector {
     /**
      * This needs to be long enough to cover the time beteween teleports starting and teleports ending, but not too long
      * that another teleports special could occur within this time frame of the first one.
+     *
+     * This is hacky but probably close enough.
      */
     private static final int TELEPORTS_COOLDOWN_TICKS = 20;
 
@@ -117,16 +121,21 @@ public class SpecialDetector extends BaseMistakeDetector {
             mistakes.add(CoxMistake.OLM_SPECIAL_LIGHTNING_DAMAGE);
         }
 
-        // HACK
-        // Normally a player cannot move > 2 tiles in 1 tick. Although teleports can teleport the player 1 or 2 tiles, I haven't figured out a way
-        // to uniquely detect that so instead only trigger this mistake when the player moves > 2 tiles in a tick which is definitely a teleport
-        WorldPoint currentLocation = raider.getCurrentWorldLocation();
-        WorldPoint previousLocation = raider.getPreviousWorldLocation();
-        if (currentLocation != null && previousLocation != null
-        && (Math.abs(raider.getCurrentWorldLocation().getX() - raider.getPreviousWorldLocation().getX()) > 2 || Math.abs(raider.getCurrentWorldLocation().getY() - raider.getPreviousWorldLocation().getY()) > 2)
-        && raider.getCurrentWorldLocation().getY() >= TELEPORTS_Y_MIN && raider.getCurrentWorldLocation().getY() <= TELEPORTS_Y_MAX
-        && RaidState.COX_REGION_IDS.contains(raider.getCurrentWorldLocation().getRegionID())) {
-            mistakes.add(CoxMistake.OLM_SPECIAL_TELEPORTS_DAMAGE);
+        LocalPoint localPoint = client.getLocalPlayer().getLocalLocation();
+        if (localPoint != null) {
+            int regionId = WorldPoint.fromLocalInstance(client, localPoint).getRegionID();
+            // HACK
+            // Normally a player cannot move > 2 tiles in 1 tick. Although teleports can teleport the player 1 or 2 tiles, I haven't figured out a way
+            // to uniquely detect that so instead only trigger this mistake when the player moves > 2 tiles in a tick which is definitely a teleport
+            WorldPoint currentLocation = raider.getCurrentWorldLocation();
+            WorldPoint previousLocation = raider.getPreviousWorldLocation();
+            log.debug("currentLocation: " + currentLocation + " previousLocation: " + previousLocation + " and regionId=" + regionId);
+            if (currentLocation != null && previousLocation != null
+                    && (Math.abs(raider.getCurrentWorldLocation().getX() - raider.getPreviousWorldLocation().getX()) > 2 || Math.abs(raider.getCurrentWorldLocation().getY() - raider.getPreviousWorldLocation().getY()) > 2)
+                    && raider.getCurrentWorldLocation().getY() >= TELEPORTS_Y_MIN && raider.getCurrentWorldLocation().getY() <= TELEPORTS_Y_MAX
+                    && RaidState.COX_REGION_IDS.contains(regionId)) {
+                mistakes.add(CoxMistake.OLM_SPECIAL_TELEPORTS_DAMAGE);
+            }
         }
 
         return mistakes;
@@ -156,7 +165,8 @@ public class SpecialDetector extends BaseMistakeDetector {
             return;
         }
 
-        raidersHitByCrystals.add(event.getActor().getName());
+        String name = Text.removeTags(event.getActor().getName());
+        raidersHitByCrystals.add(name);
     }
 
     @Subscribe

@@ -15,6 +15,7 @@ import net.runelite.api.HitsplatID;
 import net.runelite.api.NPC;
 import net.runelite.api.Player;
 import net.runelite.api.events.AnimationChanged;
+import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.HitsplatApplied;
 import net.runelite.api.events.NpcSpawned;
 import net.runelite.client.eventbus.Subscribe;
@@ -34,45 +35,32 @@ import java.util.*;
 @Slf4j
 public class HealDetector extends BaseMistakeDetector {
 
-    private final static Set<Integer> OLM_IDS = ImmutableSet.of(7551, 7554);
-    private final static Set<Integer> RIGHT_CLAW_IDS = ImmutableSet.of(7550, 7553);
     private final static Set<Integer> LEFT_CLAW_IDS = ImmutableSet.of(7552, 7555);
-    private final static Set<Integer> OLM_PARTS_IDS = new HashSet<>();
-    private static final int RESET_Y_MIN = 5154;
-    private static final int RESET_Y_MAX = 5172;
-
-    static {
-        OLM_PARTS_IDS.addAll(OLM_IDS);
-        OLM_PARTS_IDS.addAll(RIGHT_CLAW_IDS);
-        OLM_PARTS_IDS.addAll(LEFT_CLAW_IDS);
-    }
 
     private final static String LEFT_CLAW_NAME = "Left Claw";
 
+    private final static Set<String> RESET_CHAT_MESSAGES = ImmutableSet.of("The Great Olm regains control of its right claw!", "The Great Olm regains control of its left claw!");
+
     private final AppliedHitsplatsTracker appliedHitsplatsTracker;
     private final Set<String> interactingWithHand;
-    private final Set<Integer> spawnedOlmParts;
+    private boolean reset;
 
     public HealDetector() {
         appliedHitsplatsTracker = new AppliedHitsplatsTracker();
         interactingWithHand = new HashSet<>();
-        spawnedOlmParts = new HashSet<>();
+        reset = true;
     }
 
     @Override
     public void cleanup() {
         appliedHitsplatsTracker.clear();
+        interactingWithHand.clear();
+        reset = false;
     }
 
     @Override
     public RaidRoom getRaidRoom() {
         return RaidRoom.OLM;
-    }
-
-    private <T> boolean intersects(Set<T> a, Set<T> b) {
-        Set<T> c = new HashSet<>(a);
-        c.retainAll(b);
-        return c.size() > 0;
     }
 
     @Override
@@ -83,9 +71,7 @@ public class HealDetector extends BaseMistakeDetector {
             mistakes.add(CoxMistake.OLM_LEFT_CLAW_HEAL);
         }
 
-        if (!intersects(spawnedOlmParts, OLM_IDS)
-        && (intersects(spawnedOlmParts, RIGHT_CLAW_IDS) || intersects(spawnedOlmParts, LEFT_CLAW_IDS))
-        && raider.getCurrentWorldLocation().getY() >= RESET_Y_MIN && raider.getCurrentWorldLocation().getY() <= RESET_Y_MAX) {
+        if (reset) {
             mistakes.add(CoxMistake.OLM_CLAW_RESET);
         }
 
@@ -96,7 +82,7 @@ public class HealDetector extends BaseMistakeDetector {
     public void afterDetect() {
         appliedHitsplatsTracker.clear();
         interactingWithHand.clear();
-        spawnedOlmParts.clear();
+        reset = false;
     }
 
     @Subscribe
@@ -123,12 +109,9 @@ public class HealDetector extends BaseMistakeDetector {
     }
 
     @Subscribe
-    public void onNpcSpawned(NpcSpawned event) {
-        if (event.getNpc() == null) return;
-
-        int id = event.getNpc().getId();
-        if (OLM_PARTS_IDS.contains(id)) {
-            spawnedOlmParts.add(id);
+    public void onChatMessage(ChatMessage event) {
+        if (RESET_CHAT_MESSAGES.contains(event.getMessage())) {
+            reset = true;
         }
     }
 

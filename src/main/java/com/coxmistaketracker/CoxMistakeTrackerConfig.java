@@ -109,7 +109,7 @@ public interface CoxMistakeTrackerConfig extends Config {
             position = 4
     )
     default String vasaBoulderMessage() {
-        return CoxMistake.ICE_DEMON_RANGED.getDefaultMessage();
+        return CoxMistake.VASA_BOULDER.getDefaultMessage();
     }
 
     @ConfigItem(
@@ -120,9 +120,41 @@ public interface CoxMistakeTrackerConfig extends Config {
             position = 5
     )
     default String guardiansBoulderMessage() {
-        return CoxMistake.ICE_DEMON_MAGE.getDefaultMessage();
+        return CoxMistake.GUARDIANS_BOULDER.getDefaultMessage();
     }
 
+    @ConfigItem(
+            keyName = "muttadilesHealMessage",
+            name = "Muttadiles Heal",
+            description = "Message to show when the muttadiles heal at the meat tree.",
+            section = roomMistakeSettings,
+            position = 6
+    )
+    default String muttadilesHealMessage() {
+        return CoxMistake.SMALL_MUTTADILE_HEAL.getDefaultMessage();
+    }
+
+    @ConfigItem(
+            keyName = "vanguardsResetMessage",
+            name = "Vanguards Reset",
+            description = "Message to show when the vanguards reset because their HPs did not stay close enough together.",
+            section = roomMistakeSettings,
+            position = 7
+    )
+    default String vanguardsResetMessage() {
+        return CoxMistake.VANGUARDS_RESET.getDefaultMessage();
+    }
+
+    @ConfigItem(
+            keyName = "vespulaLuxGrubHatchedMessage",
+            name = "Vespula Lux Grub Hatched",
+            description = "Message to show when the one of vespula's lux grubs hatches into a vespine soldier.",
+            section = roomMistakeSettings,
+            position = 8
+    )
+    default String vespulaLuxGrubHatchedMessage() {
+        return CoxMistake.VESPULA_LUX_GRUB_HATCHED.getDefaultMessage();
+    }
 
     @ConfigSection(
             name = "Olm Messages",

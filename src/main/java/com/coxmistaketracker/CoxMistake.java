@@ -20,17 +20,21 @@ public enum CoxMistake {
     DEATH_MYSTICS("Mystics Death", CoxMistakeTrackerConfig::deathMessage, defaultDeathMessage(), "death.png"),
     DEATH_TEKTON("Tekton Death", CoxMistakeTrackerConfig::deathMessage, defaultDeathMessage(), "death-tekton.png"),
     DEATH_VANGUARDS("Vanguards Death", CoxMistakeTrackerConfig::deathMessage, defaultDeathMessage(), "death-vanguards.png"),
-    DEATH_VASA("Vasa Death", CoxMistakeTrackerConfig::deathMessage, defaultDeathMessage(), "death.png"),
+    DEATH_VASA("Vasa Death", CoxMistakeTrackerConfig::deathMessage, defaultDeathMessage(), "death-vasa.png"),
     DEATH_VESPULA("Vespula Death", CoxMistakeTrackerConfig::deathMessage, defaultDeathMessage(), "death-vespula.png"),
     DEATH_GUARDIANS("Guardians Death", CoxMistakeTrackerConfig::deathMessage, defaultDeathMessage(), "death-guardians.png"),
     DEATH_TIGHTROPE("Tighrope Death", CoxMistakeTrackerConfig::deathMessage, defaultDeathMessage(), "death-tightrope.png"),
     DEATH_OLM("Olm Death", CoxMistakeTrackerConfig::deathMessage, defaultDeathMessage(), "death-olm.png"),
-    SHAMANS_GOO("Shamans Goo", CoxMistakeTrackerConfig::shamansGooMessage, "I'm getting gooed!", "death.png"),
+    SHAMANS_GOO("Shamans Goo", CoxMistakeTrackerConfig::shamansGooMessage, "I'm getting gooed!", "shamans-blob.png"),
     TEKTON_SPARKS("Tekton Sparks", CoxMistakeTrackerConfig::tektonSparksMessage, "I'm feeling sparky!", "death.png"),
-    ICE_DEMON_RANGED("Ice Demon Ranged Hit", CoxMistakeTrackerConfig::iceDemonRangedMessage, "I'm eating boulders!", "death.png"),
+    ICE_DEMON_RANGED("Ice Demon Ranged Hit", CoxMistakeTrackerConfig::iceDemonRangedMessage, "I'm eating boulders!", "ice-demon-boulder.png"),
     ICE_DEMON_MAGE("Ice Demon Mage Hit", CoxMistakeTrackerConfig::iceDemonMageMessage, "I'm a popsicle!", "death.png"),
-    VASA_BOULDER("Vasa Boulder Hit", CoxMistakeTrackerConfig::vasaBoulderMessage, "I'm eating boulders!", "death.png"),
+    VASA_BOULDER("Vasa Boulder Hit", CoxMistakeTrackerConfig::vasaBoulderMessage, "I'm eating boulders!", "vasa-boulder.png"),
     GUARDIANS_BOULDER("Guardians Boulder Hit", CoxMistakeTrackerConfig::guardiansBoulderMessage, "I'm eating boulders!", "death.png"),
+    SMALL_MUTTADILE_HEAL("Small Muttadile Heal", CoxMistakeTrackerConfig::muttadilesHealMessage, "It's healing!", "muttadiles-heal.png"),
+    BIG_MUTTADILE_HEAL("Big Muttadile Heal", CoxMistakeTrackerConfig::muttadilesHealMessage, "It's healing!", "muttadiles-heal.png"),
+    VANGUARDS_RESET("Vanguards Reset", CoxMistakeTrackerConfig::vanguardsResetMessage, "They're resetting!", "vanguards-reset.png"),
+    VESPULA_LUX_GRUB_HATCHED("Vespula Lux Grub Hatched", CoxMistakeTrackerConfig::vespulaLuxGrubHatchedMessage, "It's hatching!", "lux-grub-hatched.png"),
     OLM_ACID_STANDSTILL("Olm Acid Standstill", (config -> ""), "", "olm-acid.png"),
     OLM_FALLING_CRYSTAL_BETWEEN_PHASES("Olm Falling Crystal Between Phases", CoxMistakeTrackerConfig::olmFallingCrystalBetweenPhasesMessage, defaultFallingCrystalMessage(), "death.png"),
     OLM_FALLING_CRYSTAL_ATTACK("Olm Falling Crystal Attack", CoxMistakeTrackerConfig::olmFallingCrystalAttackMessage, defaultFallingCrystalMessage(), "death.png"),
@@ -44,7 +48,7 @@ public enum CoxMistake {
     OLM_SPECIAL_TELEPORTS_DAMAGE("Olm Teleports Special Damage", CoxMistakeTrackerConfig::olmTeleportsMessage, "I'm going on a trip!", "death.png"),
     OLM_CRYSTAL_BOMB_EXPLOSION("Olm Crystal Bomb Explosion", CoxMistakeTrackerConfig::olmCrystalBombMessage, "I'm exploding!", "crystal-bomb.png"),
     OLM_LEFT_CLAW_HEAL("Olm Left Claw Heal", CoxMistakeTrackerConfig::olmLeftClawHealMessage, "I'm healing the claw!", "left-claw-heal.png"),
-    OLM_CLAW_RESET("Olm Claw Reset", CoxMistakeTrackerConfig::olmClawResetMessage, "I can do this all day!", "death.png");
+    OLM_CLAW_RESET("Olm Claw Reset", CoxMistakeTrackerConfig::olmClawResetMessage, "I can do this all day!", "claw-reset.png");
 
     private static final Set<CoxMistake> ROOM_DEATHS = EnumSet.of(DEATH, DEATH_ICE_DEMON, DEATH_SHAMANS, DEATH_MUTTADILES, DEATH_MYSTICS, DEATH_TEKTON, DEATH_VANGUARDS, DEATH_VASA, DEATH_VESPULA, DEATH_GUARDIANS, DEATH_TIGHTROPE, DEATH_OLM);
 
