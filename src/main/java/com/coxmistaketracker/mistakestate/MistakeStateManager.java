@@ -39,10 +39,26 @@ public class MistakeStateManager {
         mistakeStateWriter.write(this);
     }
 
+    public void addMistakeForTeam(CoxMistake mistake) {
+        // Always add to both
+        currentRaidMistakeManager.addMistakeForTeam(mistake);
+        allRaidsMistakeManager.addMistakeForTeam(mistake);
+
+        mistakeStateWriter.write(this);
+    }
+
     public void removeAllMistakesForPlayer(String playerName) {
         // Always remove from both
         currentRaidMistakeManager.removeAllMistakesForPlayer(playerName);
         allRaidsMistakeManager.removeAllMistakesForPlayer(playerName);
+
+        mistakeStateWriter.write(this);
+    }
+
+    public void removeAllMistakesForTeam() {
+        // Always remove from both
+        currentRaidMistakeManager.removeAllMistakesForTeam();
+        allRaidsMistakeManager.removeAllMistakesForTeam();
 
         mistakeStateWriter.write(this);
     }
@@ -78,12 +94,26 @@ public class MistakeStateManager {
                 currentRaidMistakeManager.getMistakeCountForPlayer(playerName, mistake);
     }
 
+    public int getMistakeCountForTeam(CoxMistake mistake) {
+        return isAll ?
+                allRaidsMistakeManager.getMistakeCountForTeam(mistake) :
+                currentRaidMistakeManager.getMistakeCountForTeam(mistake);
+    }
+
     public int getCurrentMistakeCountForPlayer(String playerName, CoxMistake mistake) {
         return currentRaidMistakeManager.getMistakeCountForPlayer(playerName, mistake);
     }
 
     public int getCurrentTotalMistakeCountForPlayer(String playerName) {
         return currentRaidMistakeManager.getTotalMistakeCountForPlayer(playerName);
+    }
+
+    public int getCurrentMistakeCountForTeam(CoxMistake mistake) {
+        return currentRaidMistakeManager.getMistakeCountForTeam(mistake);
+    }
+
+    public int getCurrentTotalMistakeCountForTeam() {
+        return currentRaidMistakeManager.getTotalMistakeCountForTeam();
     }
 
     public int getTotalMistakeCountForAllPlayers() {
@@ -95,6 +125,11 @@ public class MistakeStateManager {
     public int getRaidCountForPlayer(String playerName) {
         return isAll ? allRaidsMistakeManager.getRaidCountForPlayer(playerName) :
                 0; // Raid count for current raid isn't valid, so return 0
+    }
+
+    public int getRaidCountForTeam() {
+        return isAll ? allRaidsMistakeManager.getTrackedRaids() :
+                0; // raid count for current raid isn't valid so return 0
     }
 
     public int getTrackedRaids() {

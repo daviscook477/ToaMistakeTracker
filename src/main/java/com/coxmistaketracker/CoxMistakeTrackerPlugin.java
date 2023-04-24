@@ -1,17 +1,14 @@
 package com.coxmistaketracker;
 
-import com.google.inject.Provides;
 import com.coxmistaketracker.detector.MistakeDetectorManager;
 import com.coxmistaketracker.detector.tracker.VengeanceTracker;
 import com.coxmistaketracker.events.InRaidChanged;
 import com.coxmistaketracker.events.RaidEntered;
 import com.coxmistaketracker.panel.CoxMistakeTrackerPanel;
+import com.google.inject.Provides;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.ChatMessageType;
-import net.runelite.api.Client;
-import net.runelite.api.Constants;
-import net.runelite.api.Player;
+import net.runelite.api.*;
 import net.runelite.api.events.GameTick;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
@@ -25,7 +22,7 @@ import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.util.ImageUtil;
 
 import javax.inject.Inject;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
@@ -144,13 +141,17 @@ public class CoxMistakeTrackerPlugin extends Plugin {
     private void detectAll() {
         for (Raider raider : raidState.getRaiders().values()) {
             if (raider != null) {
-                detect(raider);
+                // detect individual mistakes
+                detectMistakes(raider);
             }
             log.debug("player " + raider.getName() + " position " + raider.getPlayer().getWorldLocation());
         }
+
+        // detect team mistakes
+        detectTeamMistakes();
     }
 
-    private void detect(@NonNull Raider raider) {
+    private void detectMistakes(@NonNull Raider raider) {
         List<CoxMistake> mistakes = mistakeDetectorManager.detectMistakes(raider);
         if (!mistakes.isEmpty()) {
             log.debug(client.getTickCount() + " Found mistakes for " + raider.getName() + " - " + mistakes);
@@ -168,6 +169,18 @@ public class CoxMistakeTrackerPlugin extends Plugin {
         }
 
         afterDetect(raider);
+    }
+
+    private void detectTeamMistakes() {
+        List<CoxMistake> mistakes = mistakeDetectorManager.detectTeamMistakes();
+        if (!mistakes.isEmpty()) {
+            log.debug(client.getTickCount() + " Found mistakes for the team - " + mistakes);
+
+            for (CoxMistake mistake : mistakes) {
+                addChatMessageForMistake(mistake);
+                addMistakeToOverlayPanel(mistake);
+            }
+        }
     }
 
     private void afterDetect(Raider raider) {
@@ -207,11 +220,49 @@ public class CoxMistakeTrackerPlugin extends Plugin {
         }
     }
 
+    private void addChatMessageForMistake(CoxMistake mistake) {
+        int mistakeCount = panel.getCurrentTotalMistakeCountForTeam();
+        String msg = CoxMistake.getChatMessageForMistakeCount(config, mistake, mistakeCount);
+
+        // Truncate message length to prevent overly-spammy messages taking up too much screen space
+        if (msg.length() > CoxMistake.MAX_MESSAGE_LENGTH) {
+            msg = msg.substring(0, CoxMistake.MAX_MESSAGE_LENGTH);
+        }
+
+        if (msg.isEmpty()) return;
+
+        NPC npcForMessage = null;
+        List<NPC> npcs = client.getNpcs();
+        for (NPC npc : npcs) {
+            if (mistake.getNpcIds().contains(npc.getId())) {
+                npcForMessage = npc;
+
+                // Add to overhead text if config is enabled
+                if (config.showMistakesOnOverheadText()) {
+                    npcForMessage.setOverheadText(msg);
+                    npcForMessage.setOverheadCycle(CYCLES_FOR_OVERHEAD_TEXT);
+                }
+            }
+        }
+
+
+
+        // Add to chat box if config is enabled
+        if (config.showMistakesInChat() && npcForMessage != null) {
+            client.addChatMessage(ChatMessageType.PUBLICCHAT, npcForMessage.getName(), msg, null);
+        }
+    }
+
     private void addMistakeToOverlayPanel(Raider raider, CoxMistake mistake) {
         // Certain mistakes have their own detection and chat messages, but should be grouped together as one in the
         // tracker panel and written state.
         CoxMistake groupedMistake = CoxMistake.toGroupedMistake(mistake);
         SwingUtilities.invokeLater(() -> panel.addMistakeForPlayer(raider.getName(), groupedMistake));
+    }
+
+    private void addMistakeToOverlayPanel(CoxMistake mistake) {
+        CoxMistake groupedMistakes = CoxMistake.toGroupedMistake(mistake);
+        SwingUtilities.invokeLater(() -> panel.addMistakeForTeam(groupedMistakes));
     }
 
     @Subscribe

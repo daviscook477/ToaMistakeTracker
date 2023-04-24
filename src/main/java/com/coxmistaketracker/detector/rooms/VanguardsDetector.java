@@ -4,6 +4,7 @@ import com.coxmistaketracker.CoxMistake;
 import com.coxmistaketracker.RaidRoom;
 import com.coxmistaketracker.Raider;
 import com.coxmistaketracker.detector.BaseMistakeDetector;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +14,9 @@ import net.runelite.api.events.HitsplatApplied;
 import net.runelite.client.eventbus.Subscribe;
 
 import javax.inject.Singleton;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Causing the vanguards to heal back to full HP by not keeping their HP sufficiently close to each other is a mistake.
@@ -41,6 +44,11 @@ public class VanguardsDetector extends BaseMistakeDetector {
 
     @Override
     public List<CoxMistake> detectMistakes(@NonNull Raider raider) {
+        return ImmutableList.of();
+    }
+
+    @Override
+    public List<CoxMistake> detectTeamMistakes() {
         List<CoxMistake> mistakes = new ArrayList<>();
 
         if (reset) {

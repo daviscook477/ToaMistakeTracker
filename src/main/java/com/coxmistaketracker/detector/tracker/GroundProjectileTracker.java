@@ -1,13 +1,11 @@
 package com.coxmistaketracker.detector.tracker;
 
 import com.coxmistaketracker.Raider;
-import com.coxmistaketracker.detector.BaseMistakeDetector;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.Projectile;
-import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.ProjectileMoved;
 
@@ -39,15 +37,18 @@ public class GroundProjectileTracker extends DelayedObjectsTracker<Projectile> {
     public void trackProjectile(@NonNull ProjectileMoved event, @NonNull Integer activationTick) {
         Projectile projectile = event.getProjectile();
         if (projectile.getId() != projectileId) {
+            log.debug("Id not matched");
             return;
         }
 
         if (!hasEnoughRemainingCycles(projectile)) {
             // There's no way there's a new projectile that only has at most 1 game tick left. It's probably
             // hanging around from a previous attack, so let's ignore
+            log.debug("Not enough cycles");
             return;
         }
 
+        log.debug("Tracking projectile " + projectile.getId() + " with " + activationTick + " activation tick");
         put(activationTick, projectile);
         trackedProjectiles.add(projectile);
     }

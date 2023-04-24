@@ -1,9 +1,9 @@
 package com.coxmistaketracker;
 
-import com.google.common.collect.ImmutableList;
 import com.coxmistaketracker.events.InRaidChanged;
 import com.coxmistaketracker.events.RaidEntered;
 import com.coxmistaketracker.events.RaidRoomChanged;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +12,6 @@ import net.runelite.api.*;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.ChatMessage;
-import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.NpcSpawned;
 import net.runelite.client.eventbus.EventBus;
@@ -21,8 +20,9 @@ import net.runelite.client.util.Text;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 @Slf4j
 @Singleton

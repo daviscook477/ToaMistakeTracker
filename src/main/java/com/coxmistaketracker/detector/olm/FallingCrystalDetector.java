@@ -4,6 +4,7 @@ import com.coxmistaketracker.CoxMistake;
 import com.coxmistaketracker.RaidRoom;
 import com.coxmistaketracker.Raider;
 import com.coxmistaketracker.detector.BaseMistakeDetector;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import lombok.NonNull;
 import net.runelite.api.coords.WorldPoint;
@@ -71,6 +72,11 @@ public class FallingCrystalDetector extends BaseMistakeDetector {
         }
 
         return mistakes;
+    }
+
+    @Override
+    public List<CoxMistake> detectTeamMistakes() {
+        return ImmutableList.of();
     }
 
     @Override

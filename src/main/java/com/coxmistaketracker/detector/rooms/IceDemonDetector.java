@@ -4,7 +4,7 @@ import com.coxmistaketracker.CoxMistake;
 import com.coxmistaketracker.RaidRoom;
 import com.coxmistaketracker.Raider;
 import com.coxmistaketracker.detector.BaseMistakeDetector;
-import com.coxmistaketracker.detector.tracker.AppliedHitsplatsTracker;
+import com.google.common.collect.ImmutableList;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.HitsplatID;
@@ -77,6 +77,11 @@ public class IceDemonDetector extends BaseMistakeDetector {
         }
 
         return mistakes;
+    }
+
+    @Override
+    public List<CoxMistake> detectTeamMistakes() {
+        return ImmutableList.of();
     }
 
     private boolean raiderHasNonZeroHitsplat(Raider raider) {

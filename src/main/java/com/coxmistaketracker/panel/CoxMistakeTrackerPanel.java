@@ -17,32 +17,14 @@ import net.runelite.client.util.SwingUtil;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JRadioButton;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -88,6 +70,7 @@ public class CoxMistakeTrackerPanel extends PluginPanel {
 
     // Keep track of all boxes
     private final List<PlayerMistakesBox> playerMistakesBoxes = new ArrayList<>();
+    private final PlayerMistakesBox teamMistakesBox = null;
 
     // Keep track of the current death grouping
     private boolean isRaidDeaths;
@@ -319,6 +302,20 @@ public class CoxMistakeTrackerPanel extends PluginPanel {
     }
 
     /**
+     * Adds a mistake for the team, both in the manager and the panel.
+     */
+    public void addMistakeForTeam(CoxMistake mistake) {
+        mistakeStateManager.addMistakeForTeam(mistake);
+
+        PlayerMistakesBox box = buildBox("The Team"); // might not work if the player "The Team" is in the raid
+        box.rebuildAllMistakes(isRaidDeaths);
+        updateOverallPanel();
+
+        // Ensure ordering is correct
+        reorderRaiderBoxes();
+    }
+
+    /**
      * Retrieve the current mistake count for the specified player in the current raid
      *
      * @param playerName The player name to get the mistake count for
@@ -340,6 +337,15 @@ public class CoxMistakeTrackerPanel extends PluginPanel {
     }
 
     /**
+     * Retrieve the current total mistake count for the team in the current raid
+     *
+     * @return The total number of mistakes made in this raid by the team
+     */
+    public int getCurrentTotalMistakeCountForTeam() {
+        return mistakeStateManager.getCurrentTotalMistakeCountForTeam();
+    }
+
+    /**
      * Rebuilds all the boxes from scratch based on which view we're currently looking at
      */
     private void rebuildAll() {
@@ -353,6 +359,7 @@ public class CoxMistakeTrackerPanel extends PluginPanel {
         for (String playerName : mistakeStateManager.getPlayersWithMistakes()) {
             buildBox(playerName);
         }
+        buildBox("The Team");
 
         playerMistakesBoxes.forEach(box -> box.rebuildAllMistakes(isRaidDeaths));
         updateOverallPanel();

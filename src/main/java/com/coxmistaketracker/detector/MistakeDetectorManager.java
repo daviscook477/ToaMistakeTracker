@@ -1,24 +1,21 @@
 package com.coxmistaketracker.detector;
 
-import com.coxmistaketracker.detector.olm.*;
-import com.coxmistaketracker.detector.rooms.*;
-import com.google.common.annotations.VisibleForTesting;
+import com.coxmistaketracker.CoxMistake;
 import com.coxmistaketracker.RaidState;
 import com.coxmistaketracker.Raider;
-import com.coxmistaketracker.CoxMistake;
 import com.coxmistaketracker.detector.death.DeathDetector;
+import com.coxmistaketracker.detector.olm.*;
+import com.coxmistaketracker.detector.rooms.*;
 import com.coxmistaketracker.detector.tracker.BaseRaidTracker;
 import com.coxmistaketracker.detector.tracker.VengeanceTracker;
 import com.coxmistaketracker.events.RaidRoomChanged;
+import com.google.common.annotations.VisibleForTesting;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
-import net.runelite.api.events.ChatMessage;
 import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.util.Text;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -136,6 +133,19 @@ public class MistakeDetectorManager {
         for (BaseMistakeDetector mistakeDetector : mistakeDetectors) {
             if (mistakeDetector.isDetectingMistakes() && !raider.isDead()) {
                 mistakes.addAll(mistakeDetector.detectMistakes(raider));
+            }
+        }
+
+        return mistakes;
+    }
+
+    public List<CoxMistake> detectTeamMistakes() {
+        if (!started) return Collections.emptyList();
+
+        List<CoxMistake> mistakes = new ArrayList<>();
+        for (BaseMistakeDetector mistakeDetector : mistakeDetectors) {
+            if (mistakeDetector.isDetectingMistakes()) {
+                mistakes.addAll(mistakeDetector.detectTeamMistakes());
             }
         }
 

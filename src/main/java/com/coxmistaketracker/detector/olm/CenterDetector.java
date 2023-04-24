@@ -4,6 +4,7 @@ import com.coxmistaketracker.CoxMistake;
 import com.coxmistaketracker.RaidRoom;
 import com.coxmistaketracker.Raider;
 import com.coxmistaketracker.detector.BaseMistakeDetector;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -55,6 +56,11 @@ public class CenterDetector extends BaseMistakeDetector {
 
     @Override
     public List<CoxMistake> detectMistakes(@NonNull Raider raider) {
+        return ImmutableList.of();
+    }
+
+    @Override
+    public List<CoxMistake> detectTeamMistakes() {
         List<CoxMistake> mistakes = new ArrayList<>();
 
         // this is only a mistake in team raids

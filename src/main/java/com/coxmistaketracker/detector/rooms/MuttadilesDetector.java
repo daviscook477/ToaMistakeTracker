@@ -4,6 +4,7 @@ import com.coxmistaketracker.CoxMistake;
 import com.coxmistaketracker.RaidRoom;
 import com.coxmistaketracker.Raider;
 import com.coxmistaketracker.detector.BaseMistakeDetector;
+import com.google.common.collect.ImmutableList;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.HitsplatID;
@@ -61,6 +62,11 @@ public class MuttadilesDetector extends BaseMistakeDetector {
 
     @Override
     public List<CoxMistake> detectMistakes(@NonNull Raider raider) {
+        return ImmutableList.of();
+    }
+
+    @Override
+    public List<CoxMistake> detectTeamMistakes() {
         List<CoxMistake> mistakes = new ArrayList<>();
 
         if (smallHealed) {

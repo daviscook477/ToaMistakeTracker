@@ -1,10 +1,11 @@
 package com.coxmistaketracker.detector.death;
 
-import com.google.common.collect.ImmutableMap;
+import com.coxmistaketracker.CoxMistake;
 import com.coxmistaketracker.RaidRoom;
 import com.coxmistaketracker.Raider;
-import com.coxmistaketracker.CoxMistake;
 import com.coxmistaketracker.detector.BaseMistakeDetector;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Player;
@@ -12,12 +13,7 @@ import net.runelite.api.events.ActorDeath;
 import net.runelite.client.eventbus.Subscribe;
 
 import javax.inject.Singleton;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static com.coxmistaketracker.CoxMistake.*;
 
@@ -76,6 +72,11 @@ public class DeathDetector extends BaseMistakeDetector {
         }
 
         return mistakes;
+    }
+
+    @Override
+    public List<CoxMistake> detectTeamMistakes() {
+        return ImmutableList.of();
     }
 
     @Override

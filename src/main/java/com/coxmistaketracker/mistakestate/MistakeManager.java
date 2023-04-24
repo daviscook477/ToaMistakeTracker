@@ -13,15 +13,18 @@ import java.util.stream.Collectors;
 class MistakeManager {
 
     private final Map<String, PlayerTrackingInfo> trackingInfo;
+    private TeamTrackingInfo teamTrackingInfo;
     private int trackedRaids;
 
     MistakeManager() {
         trackingInfo = new HashMap<>();
+        teamTrackingInfo = new TeamTrackingInfo();
         trackedRaids = 0;
     }
 
     public void clearAllMistakes() {
         trackingInfo.clear();
+        teamTrackingInfo = new TeamTrackingInfo();
         trackedRaids = 0;
     }
 
@@ -29,6 +32,10 @@ class MistakeManager {
         PlayerTrackingInfo playerInfo = trackingInfo.computeIfAbsent(playerName,
                 k -> new PlayerTrackingInfo(playerName));
         playerInfo.incrementMistake(mistake);
+    }
+
+    public void addMistakeForTeam(CoxMistake mistake) {
+        teamTrackingInfo.incrementMistake(mistake);
     }
 
     public void newRaid(Set<String> playerNames) {
@@ -50,6 +57,10 @@ class MistakeManager {
         trackingInfo.remove(playerName);
     }
 
+    public void removeAllMistakesForTeam() {
+        teamTrackingInfo = new TeamTrackingInfo();
+    }
+
     public Set<String> getPlayersWithMistakes() {
         return trackingInfo.values().stream()
                 .filter(PlayerTrackingInfo::hasMistakes)
@@ -69,6 +80,15 @@ class MistakeManager {
         return 0;
     }
 
+    public int getMistakeCountForTeam(CoxMistake mistake) {
+        Integer count = teamTrackingInfo.getMistakes().get(mistake);
+        if (count != null) {
+            return count;
+        }
+
+        return 0;
+    }
+
     public int getTotalMistakeCountForPlayer(String playerName) {
         int totalMistakes = 0;
         PlayerTrackingInfo playerInfo = trackingInfo.get(playerName);
@@ -76,6 +96,14 @@ class MistakeManager {
             for (int mistakes : playerInfo.getMistakes().values()) {
                 totalMistakes += mistakes;
             }
+        }
+        return totalMistakes;
+    }
+
+    public int getTotalMistakeCountForTeam() {
+        int totalMistakes = 0;
+        for (int mistakes : teamTrackingInfo.getMistakes().values()) {
+            totalMistakes += mistakes;
         }
         return totalMistakes;
     }

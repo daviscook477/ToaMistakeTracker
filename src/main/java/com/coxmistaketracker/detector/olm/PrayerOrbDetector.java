@@ -5,6 +5,7 @@ import com.coxmistaketracker.RaidRoom;
 import com.coxmistaketracker.Raider;
 import com.coxmistaketracker.detector.BaseMistakeDetector;
 import com.coxmistaketracker.detector.tracker.OverheadTracker;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -58,6 +59,11 @@ public class PrayerOrbDetector extends BaseMistakeDetector {
         }
 
         return mistakes;
+    }
+
+    @Override
+    public List<CoxMistake> detectTeamMistakes() {
+        return ImmutableList.of();
     }
 
     @Override

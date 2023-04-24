@@ -5,7 +5,6 @@ import com.coxmistaketracker.RaidRoom;
 import com.coxmistaketracker.Raider;
 import com.coxmistaketracker.detector.BaseMistakeDetector;
 import com.coxmistaketracker.detector.tracker.AppliedHitsplatsTracker;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -17,11 +16,13 @@ import net.runelite.api.Player;
 import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.HitsplatApplied;
-import net.runelite.api.events.NpcSpawned;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.util.Text;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * When the melee hand is using healing special, any damage dealt to it heals it instead.
@@ -70,6 +71,17 @@ public class HealDetector extends BaseMistakeDetector {
         if (interactingWithHand.contains(raider.getName()) && appliedHitsplatsTracker.peekHitsplatApplied(LEFT_CLAW_NAME)) {
             mistakes.add(CoxMistake.OLM_LEFT_CLAW_HEAL);
         }
+
+        if (reset) {
+            mistakes.add(CoxMistake.OLM_CLAW_RESET);
+        }
+
+        return mistakes;
+    }
+
+    @Override
+    public List<CoxMistake> detectTeamMistakes() {
+        List<CoxMistake> mistakes = new ArrayList<>();
 
         if (reset) {
             mistakes.add(CoxMistake.OLM_CLAW_RESET);

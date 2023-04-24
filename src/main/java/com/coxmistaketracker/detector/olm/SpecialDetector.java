@@ -5,6 +5,7 @@ import com.coxmistaketracker.RaidRoom;
 import com.coxmistaketracker.RaidState;
 import com.coxmistaketracker.Raider;
 import com.coxmistaketracker.detector.BaseMistakeDetector;
+import com.google.common.collect.ImmutableList;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Player;
@@ -139,6 +140,11 @@ public class SpecialDetector extends BaseMistakeDetector {
         }
 
         return mistakes;
+    }
+
+    @Override
+    public List<CoxMistake> detectTeamMistakes() {
+        return ImmutableList.of();
     }
 
     @Override

@@ -5,19 +5,13 @@ import com.coxmistaketracker.mistakestate.MistakeStateManager;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.FontManager;
 
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +19,7 @@ import java.util.List;
 /**
  * A panel box for a mistake. This was copied over from ToaMistakeTracker, with minor changes
  */
+@Slf4j
 public class PlayerMistakesBox extends JPanel {
 
     private static final int ITEMS_PER_ROW = 5;
@@ -82,7 +77,7 @@ public class PlayerMistakesBox extends JPanel {
         final String mistakeString = totalMistakes == 1 ? "Mistake" : "Mistakes";
         mistakeCountLabel.setText(String.format("%s %s", totalMistakes, mistakeString));
 
-        final int totalRaids = mistakeStateManager.getRaidCountForPlayer(playerName);
+        final int totalRaids = playerName.equals("The Team") ? mistakeStateManager.getRaidCountForTeam() : mistakeStateManager.getRaidCountForPlayer(playerName);
         if (totalRaids > 0) {
             final String raidString = totalRaids == 1 ? "Raid" : "Raids";
             raidCountLabel.setText(String.format("(%s %s)", totalRaids, raidString));
@@ -104,7 +99,7 @@ public class PlayerMistakesBox extends JPanel {
                 continue;
             }
 
-            int mistakeCount = mistakeStateManager.getMistakeCountForPlayer(playerName, mistake);
+            int mistakeCount = playerName.equals("The Team") ? mistakeStateManager.getMistakeCountForTeam(mistake) : mistakeStateManager.getMistakeCountForPlayer(playerName, mistake);
             if (mistakeCount > 0) {
                 totalMistakes += mistakeCount;
                 mistakeCountsForPlayer.add(new CoxMistakeCount(mistake, mistakeCount));

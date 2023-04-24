@@ -1,14 +1,15 @@
 package com.coxmistaketracker;
 
+import com.google.common.collect.ImmutableSet;
 import lombok.Getter;
 import lombok.NonNull;
 import net.runelite.client.util.ImageUtil;
 
 import java.awt.image.BufferedImage;
-import java.util.function.Function;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Set;
+import java.util.function.Function;
 
 public enum CoxMistake {
     // Deaths
@@ -17,40 +18,40 @@ public enum CoxMistake {
     DEATH_CRABS("Crabs Death", CoxMistakeTrackerConfig::deathMessage, defaultDeathMessage(), "death-crabs.png"),
     DEATH_SHAMANS("Shamans Death", CoxMistakeTrackerConfig::deathMessage, defaultDeathMessage(), "death-shamans.png"),
     DEATH_MUTTADILES("Muttadiles Death", CoxMistakeTrackerConfig::deathMessage, defaultDeathMessage(), "death-muttadiles.png"),
-    DEATH_MYSTICS("Mystics Death", CoxMistakeTrackerConfig::deathMessage, defaultDeathMessage(), "death.png"),
+    DEATH_MYSTICS("Mystics Death", CoxMistakeTrackerConfig::deathMessage, defaultDeathMessage(), "death-mystics.png"),
     DEATH_TEKTON("Tekton Death", CoxMistakeTrackerConfig::deathMessage, defaultDeathMessage(), "death-tekton.png"),
     DEATH_VANGUARDS("Vanguards Death", CoxMistakeTrackerConfig::deathMessage, defaultDeathMessage(), "death-vanguards.png"),
     DEATH_VASA("Vasa Death", CoxMistakeTrackerConfig::deathMessage, defaultDeathMessage(), "death-vasa.png"),
     DEATH_VESPULA("Vespula Death", CoxMistakeTrackerConfig::deathMessage, defaultDeathMessage(), "death-vespula.png"),
     DEATH_GUARDIANS("Guardians Death", CoxMistakeTrackerConfig::deathMessage, defaultDeathMessage(), "death-guardians.png"),
-    DEATH_TIGHTROPE("Tighrope Death", CoxMistakeTrackerConfig::deathMessage, defaultDeathMessage(), "death-tightrope.png"),
+    DEATH_TIGHTROPE("Tightrope Death", CoxMistakeTrackerConfig::deathMessage, defaultDeathMessage(), "death-tightrope.png"),
     DEATH_OLM("Olm Death", CoxMistakeTrackerConfig::deathMessage, defaultDeathMessage(), "death-olm.png"),
     SHAMANS_GOO("Shamans Goo", CoxMistakeTrackerConfig::shamansGooMessage, "I'm getting gooed!", "shamans-blob.png"),
     TEKTON_SPARKS("Tekton Sparks", CoxMistakeTrackerConfig::tektonSparksMessage, "I'm feeling sparky!", "death.png"),
     ICE_DEMON_RANGED("Ice Demon Ranged Hit", CoxMistakeTrackerConfig::iceDemonRangedMessage, "I'm eating boulders!", "ice-demon-boulder.png"),
-    ICE_DEMON_MAGE("Ice Demon Mage Hit", CoxMistakeTrackerConfig::iceDemonMageMessage, "I'm a popsicle!", "death.png"),
+    ICE_DEMON_MAGE("Ice Demon Mage Hit", CoxMistakeTrackerConfig::iceDemonMageMessage, "I'm a popsicle!", "ice-demon-mage.png"),
     VASA_BOULDER("Vasa Boulder Hit", CoxMistakeTrackerConfig::vasaBoulderMessage, "I'm eating boulders!", "vasa-boulder.png"),
-    GUARDIANS_BOULDER("Guardians Boulder Hit", CoxMistakeTrackerConfig::guardiansBoulderMessage, "I'm eating boulders!", "death.png"),
-    SMALL_MUTTADILE_HEAL("Small Muttadile Heal", CoxMistakeTrackerConfig::muttadilesHealMessage, "It's healing!", "muttadiles-heal.png"),
-    BIG_MUTTADILE_HEAL("Big Muttadile Heal", CoxMistakeTrackerConfig::muttadilesHealMessage, "It's healing!", "muttadiles-heal.png"),
-    VANGUARDS_RESET("Vanguards Reset", CoxMistakeTrackerConfig::vanguardsResetMessage, "They're resetting!", "vanguards-reset.png"),
-    VESPULA_LUX_GRUB_HATCHED("Vespula Lux Grub Hatched", CoxMistakeTrackerConfig::vespulaLuxGrubHatchedMessage, "It's hatching!", "lux-grub-hatched.png"),
+    GUARDIANS_BOULDER("Guardians Boulder Hit", CoxMistakeTrackerConfig::guardiansBoulderMessage, "I'm eating boulders!", "guardians-boulder.png"),
+    SMALL_MUTTADILE_HEAL("Small Muttadile Heal", CoxMistakeTrackerConfig::muttadilesHealMessage, "Meat! Yum!", "muttadiles-heal.png", ImmutableSet.of(7561, 7562, 7563)),
+    BIG_MUTTADILE_HEAL("Big Muttadile Heal", CoxMistakeTrackerConfig::muttadilesHealMessage, "Meat! Yum!", "muttadiles-heal.png", ImmutableSet.of(7561, 7562, 7563)),
+    VANGUARDS_RESET("Vanguards Reset", CoxMistakeTrackerConfig::vanguardsResetMessage, "We can do this all day!", "vanguards-reset.png", ImmutableSet.of(7525, 7526, 7527, 7528, 7529)),
+    VESPULA_LUX_GRUB_HATCHED("Vespula Lux Grub Hatched", CoxMistakeTrackerConfig::vespulaLuxGrubHatchedMessage, "Go my spawn!", "lux-grub-hatched.png", ImmutableSet.of(7530, 7531, 7532)),
     OLM_ACID_STANDSTILL("Olm Acid Standstill", (config -> ""), "", "olm-acid.png"),
     OLM_FALLING_CRYSTAL_BETWEEN_PHASES("Olm Falling Crystal Between Phases", CoxMistakeTrackerConfig::olmFallingCrystalBetweenPhasesMessage, defaultFallingCrystalMessage(), "death.png"),
     OLM_FALLING_CRYSTAL_ATTACK("Olm Falling Crystal Attack", CoxMistakeTrackerConfig::olmFallingCrystalAttackMessage, defaultFallingCrystalMessage(), "death.png"),
-    OLM_CENTER("Olm Head Centered", CoxMistakeTrackerConfig::olmCenterMessage, "I'm centering!", "death.png"),
-    OLM_PRAYER_ORB("Olm Prayer Orb", CoxMistakeTrackerConfig::olmPrayerMessage, "What even was that attack?", "death.png"),
-    OLM_SPECIAL_CRYSTAL_OCCURS("Olm Crystals Special Occurs", CoxMistakeTrackerConfig::olmSpecialOccursMessage, defaultSpecialOccursMessage(), "death.png"),
-    OLM_SPECIAL_LIGHTNING_OCCURS("Olm Lightning Special Occurs", CoxMistakeTrackerConfig::olmSpecialOccursMessage, defaultSpecialOccursMessage(), "death.png"),
-    OLM_SPECIAL_TELEPORTS_OCCURS("Olm Teleports Special Occurs", CoxMistakeTrackerConfig::olmSpecialOccursMessage, defaultSpecialOccursMessage(), "death.png"),
+    OLM_CENTER("Olm Head Centered", CoxMistakeTrackerConfig::olmCenterMessage, "I'm centering!", "death.png", ImmutableSet.of(7551, 7554)),
+    OLM_PRAYER_ORB("Olm Prayer Orb", CoxMistakeTrackerConfig::olmPrayerMessage, "What even was that attack?", "prayer-orb.png"),
+    OLM_SPECIAL_CRYSTAL_OCCURS("Olm Crystals Special Occurs", CoxMistakeTrackerConfig::olmSpecialOccursMessage, defaultSpecialOccursMessage(), "death.png", ImmutableSet.of(7551, 7554)),
+    OLM_SPECIAL_LIGHTNING_OCCURS("Olm Lightning Special Occurs", CoxMistakeTrackerConfig::olmSpecialOccursMessage, defaultSpecialOccursMessage(), "death.png", ImmutableSet.of(7551, 7554)),
+    OLM_SPECIAL_TELEPORTS_OCCURS("Olm Teleports Special Occurs", CoxMistakeTrackerConfig::olmSpecialOccursMessage, defaultSpecialOccursMessage(), "death.png", ImmutableSet.of(7551, 7554)),
     OLM_SPECIAL_CRYSTALS_DAMAGE("Olm Crystals Special Damage", CoxMistakeTrackerConfig::olmCrystalsMessage, "I'm bursting!", "death.png"),
     OLM_SPECIAL_LIGHTNING_DAMAGE("Olm Lightning Special Damage", CoxMistakeTrackerConfig::olmLightningMessage, "I'm shocked!", "death.png"),
     OLM_SPECIAL_TELEPORTS_DAMAGE("Olm Teleports Special Damage", CoxMistakeTrackerConfig::olmTeleportsMessage, "I'm going on a trip!", "death.png"),
     OLM_CRYSTAL_BOMB_EXPLOSION("Olm Crystal Bomb Explosion", CoxMistakeTrackerConfig::olmCrystalBombMessage, "I'm exploding!", "crystal-bomb.png"),
     OLM_LEFT_CLAW_HEAL("Olm Left Claw Heal", CoxMistakeTrackerConfig::olmLeftClawHealMessage, "I'm healing the claw!", "left-claw-heal.png"),
-    OLM_CLAW_RESET("Olm Claw Reset", CoxMistakeTrackerConfig::olmClawResetMessage, "I can do this all day!", "claw-reset.png");
+    OLM_CLAW_RESET("Olm Claw Reset", CoxMistakeTrackerConfig::olmClawResetMessage, "I can do this all day!", "claw-reset.png", ImmutableSet.of(7551, 7554));
 
-    private static final Set<CoxMistake> ROOM_DEATHS = EnumSet.of(DEATH, DEATH_ICE_DEMON, DEATH_SHAMANS, DEATH_MUTTADILES, DEATH_MYSTICS, DEATH_TEKTON, DEATH_VANGUARDS, DEATH_VASA, DEATH_VESPULA, DEATH_GUARDIANS, DEATH_TIGHTROPE, DEATH_OLM);
+    private static final Set<CoxMistake> ROOM_DEATHS = EnumSet.of(DEATH_ICE_DEMON, DEATH_CRABS, DEATH_SHAMANS, DEATH_MUTTADILES, DEATH_MYSTICS, DEATH_TEKTON, DEATH_VANGUARDS, DEATH_VASA, DEATH_VESPULA, DEATH_GUARDIANS, DEATH_TIGHTROPE, DEATH_OLM);
 
     private static final String FALLBACK_IMAGE_PATH = "death.png";
 
@@ -71,8 +72,17 @@ public enum CoxMistake {
     @NonNull
     private final BufferedImage mistakeImage;
 
+    @Getter
+    @NonNull
+    private final Set<Integer> npcIds;
+
     CoxMistake(@NonNull String mistakeName, @NonNull Function<CoxMistakeTrackerConfig, String> chatMessageFunc, @NonNull String defaultMessage,
                @NonNull String mistakeImagePath) {
+        this(mistakeName, chatMessageFunc, defaultMessage, mistakeImagePath, ImmutableSet.of());
+    }
+
+    CoxMistake(@NonNull String mistakeName, @NonNull Function<CoxMistakeTrackerConfig, String> chatMessageFunc, @NonNull String defaultMessage,
+               @NonNull String mistakeImagePath, @NonNull Set<Integer> npcIds) {
         this.mistakeName = mistakeName;
         this.chatMessageFunc = chatMessageFunc;
         this.defaultMessage = defaultMessage;
@@ -84,7 +94,10 @@ public enum CoxMistake {
             imagePath = mistakeImagePath;
         }
         this.mistakeImage = ImageUtil.loadImageResource(getClass(), imagePath);
+
+        this.npcIds = npcIds;
     }
+
 
     public String getChatMessage(CoxMistakeTrackerConfig config) {
         return chatMessageFunc.apply(config);

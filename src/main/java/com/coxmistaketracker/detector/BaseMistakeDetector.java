@@ -1,19 +1,14 @@
 package com.coxmistaketracker.detector;
 
-import com.google.common.collect.ImmutableSet;
+import com.coxmistaketracker.CoxMistake;
 import com.coxmistaketracker.RaidRoom;
 import com.coxmistaketracker.RaidState;
 import com.coxmistaketracker.Raider;
-import com.coxmistaketracker.CoxMistake;
 import com.coxmistaketracker.detector.tracker.VengeanceTracker;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.Actor;
-import net.runelite.api.Client;
-import net.runelite.api.Constants;
-import net.runelite.api.GraphicsObject;
-import net.runelite.api.Projectile;
+import net.runelite.api.*;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.client.eventbus.EventBus;
 
@@ -86,6 +81,15 @@ public abstract class BaseMistakeDetector {
      * @return The list of {@link CoxMistake} detected on this tick
      */
     public abstract List<CoxMistake> detectMistakes(@NonNull Raider raider);
+
+    /**
+     * Detects mistakes for the team.
+     * This is called during handling the {@link net.runelite.api.events.GameTick} event, each tick.
+     * This is called after detecting mistakes for all individual raiders.
+     *
+     * @return The list of {@link CoxMistake} made by the team detected on this tick
+     */
+    public abstract List<CoxMistake> detectTeamMistakes();
 
     /**
      * This method allows detectors to handle some logic after all detectMistakes methods have been invoked
