@@ -36,7 +36,7 @@ import java.util.Set;
 public class CenterDetector extends BaseMistakeDetector {
 
     private final static Set<Integer> CENTER_ANIMATION_IDS = ImmutableSet.of(7342, 7340);
-    private final static String OLM_NAME = "Great Olm";
+    private final static Set<Integer> OLM_IDS = ImmutableSet.of(7551, 7554);
 
     private boolean centered;
 
@@ -78,10 +78,9 @@ public class CenterDetector extends BaseMistakeDetector {
 
     @Subscribe
     public void onAnimationChanged(AnimationChanged event) {
-        if (event.getActor() == null || event.getActor().getName() == null) return;
+        if (event.getActor() == null) return;
 
-        String name = Text.removeTags(event.getActor().getName());
-        if (event.getActor() instanceof NPC && OLM_NAME.equals(name) && CENTER_ANIMATION_IDS.contains(event.getActor().getAnimation()) && !event.getActor().isDead()) {
+        if (event.getActor() instanceof NPC && OLM_IDS.contains(((NPC) event.getActor()).getId()) && CENTER_ANIMATION_IDS.contains(event.getActor().getAnimation())) {
             centered = true;
         }
     }

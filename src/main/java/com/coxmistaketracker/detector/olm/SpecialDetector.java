@@ -6,8 +6,10 @@ import com.coxmistaketracker.RaidState;
 import com.coxmistaketracker.Raider;
 import com.coxmistaketracker.detector.BaseMistakeDetector;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.api.NPC;
 import net.runelite.api.Player;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
@@ -53,6 +55,9 @@ public class SpecialDetector extends BaseMistakeDetector {
 
     private static final int TELEPORTS_Y_MIN = 5154;
     private static final int TELEPORTS_Y_MAX = 5172;
+
+    private final static Set<Integer> LEFT_CLAW_IDS = ImmutableSet.of(7552, 7555);
+    private final static Set<Integer> RIGHT_CLAW_IDS = ImmutableSet.of(7550, 7553);
 
     /**
      * This needs to be long enough to cover the time beteween teleports starting and teleports ending, but not too long
@@ -105,6 +110,34 @@ public class SpecialDetector extends BaseMistakeDetector {
     public List<CoxMistake> detectMistakes(@NonNull Raider raider) {
         List<CoxMistake> mistakes = new ArrayList<>();
 
+        if (raidersHitByCrystals.contains(raider.getName())) {
+            mistakes.add(CoxMistake.OLM_SPECIAL_CRYSTALS_DAMAGE);
+        }
+        if (lightningDangerTiles.contains(raider.getPreviousWorldLocation())) {
+            mistakes.add(CoxMistake.OLM_SPECIAL_LIGHTNING_DAMAGE);
+        }
+
+        // HACK
+        // Normally a player cannot move > 2 tiles in 1 tick. Although teleports can teleport the player 1 or 2 tiles, I haven't figured out a way
+        // to uniquely detect that so instead only trigger this mistake when the player moves > 2 tiles in a tick which is definitely a teleport
+        WorldPoint currentLocation = raider.getCurrentWorldLocation();
+        WorldPoint previousLocation = raider.getPreviousWorldLocation();
+        if (currentLocation != null && previousLocation != null) {
+            log.debug("currentLocation: " + currentLocation + " current regionId " + currentLocation.getRegionID() + " previousLocation: " + previousLocation + " and previous regionId " + previousLocation.getRegionID());
+            if ((Math.abs(raider.getCurrentWorldLocation().getX() - raider.getPreviousWorldLocation().getX()) > 2 || Math.abs(raider.getCurrentWorldLocation().getY() - raider.getPreviousWorldLocation().getY()) > 2)
+                    && RaidState.OLM_REGION_ID == currentLocation.getRegionID() && RaidState.OLM_REGION_ID == previousLocation.getRegionID()) {
+                mistakes.add(CoxMistake.OLM_SPECIAL_TELEPORTS_DAMAGE);
+            }
+        }
+
+
+        return mistakes;
+    }
+
+    @Override
+    public List<CoxMistake> detectTeamMistakes() {
+        List<CoxMistake> mistakes = new ArrayList<>();
+
         if (crystals) {
             mistakes.add(CoxMistake.OLM_SPECIAL_CRYSTAL_OCCURS);
         }
@@ -115,36 +148,7 @@ public class SpecialDetector extends BaseMistakeDetector {
             mistakes.add(CoxMistake.OLM_SPECIAL_TELEPORTS_OCCURS);
         }
 
-        if (raidersHitByCrystals.contains(raider.getName())) {
-            mistakes.add(CoxMistake.OLM_SPECIAL_CRYSTALS_DAMAGE);
-        }
-        if (lightningDangerTiles.contains(raider.getPreviousWorldLocation())) {
-            mistakes.add(CoxMistake.OLM_SPECIAL_LIGHTNING_DAMAGE);
-        }
-
-        LocalPoint localPoint = client.getLocalPlayer().getLocalLocation();
-        if (localPoint != null) {
-            int regionId = WorldPoint.fromLocalInstance(client, localPoint).getRegionID();
-            // HACK
-            // Normally a player cannot move > 2 tiles in 1 tick. Although teleports can teleport the player 1 or 2 tiles, I haven't figured out a way
-            // to uniquely detect that so instead only trigger this mistake when the player moves > 2 tiles in a tick which is definitely a teleport
-            WorldPoint currentLocation = raider.getCurrentWorldLocation();
-            WorldPoint previousLocation = raider.getPreviousWorldLocation();
-            log.debug("currentLocation: " + currentLocation + " previousLocation: " + previousLocation + " and regionId=" + regionId);
-            if (currentLocation != null && previousLocation != null
-                    && (Math.abs(raider.getCurrentWorldLocation().getX() - raider.getPreviousWorldLocation().getX()) > 2 || Math.abs(raider.getCurrentWorldLocation().getY() - raider.getPreviousWorldLocation().getY()) > 2)
-                    && raider.getCurrentWorldLocation().getY() >= TELEPORTS_Y_MIN && raider.getCurrentWorldLocation().getY() <= TELEPORTS_Y_MAX
-                    && RaidState.COX_REGION_IDS.contains(regionId)) {
-                mistakes.add(CoxMistake.OLM_SPECIAL_TELEPORTS_DAMAGE);
-            }
-        }
-
         return mistakes;
-    }
-
-    @Override
-    public List<CoxMistake> detectTeamMistakes() {
-        return ImmutableList.of();
     }
 
     @Override
@@ -189,10 +193,5 @@ public class SpecialDetector extends BaseMistakeDetector {
             teleports = true;
             lastTeleportsTick = currentTeleportsTick;
         }
-    }
-
-
-    private boolean areSpecialsMistakes() {
-        return true;
     }
 }

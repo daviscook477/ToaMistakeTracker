@@ -43,19 +43,19 @@ public class HealDetector extends BaseMistakeDetector {
     private final static Set<String> RESET_CHAT_MESSAGES = ImmutableSet.of("The Great Olm regains control of its right claw!", "The Great Olm regains control of its left claw!");
 
     private final AppliedHitsplatsTracker appliedHitsplatsTracker;
-    private final Set<String> interactingWithHand;
+    private Player lastInteractedWithHand;
     private boolean reset;
 
     public HealDetector() {
         appliedHitsplatsTracker = new AppliedHitsplatsTracker();
-        interactingWithHand = new HashSet<>();
+        lastInteractedWithHand = null;
         reset = true;
     }
 
     @Override
     public void cleanup() {
         appliedHitsplatsTracker.clear();
-        interactingWithHand.clear();
+        lastInteractedWithHand = null;
         reset = false;
     }
 
@@ -68,7 +68,7 @@ public class HealDetector extends BaseMistakeDetector {
     public List<CoxMistake> detectMistakes(@NonNull Raider raider) {
         List<CoxMistake> mistakes = new ArrayList<>();
 
-        if (interactingWithHand.contains(raider.getName()) && appliedHitsplatsTracker.peekHitsplatApplied(LEFT_CLAW_NAME)) {
+        if (lastInteractedWithHand == raider.getPlayer() && appliedHitsplatsTracker.peekHitsplatApplied(LEFT_CLAW_NAME)) {
             mistakes.add(CoxMistake.OLM_LEFT_CLAW_HEAL);
         }
 
@@ -93,7 +93,6 @@ public class HealDetector extends BaseMistakeDetector {
     @Override
     public void afterDetect() {
         appliedHitsplatsTracker.clear();
-        interactingWithHand.clear();
         reset = false;
     }
 
@@ -102,6 +101,7 @@ public class HealDetector extends BaseMistakeDetector {
         if (event.getActor() == null) return;
 
         if (event.getActor() instanceof NPC && LEFT_CLAW_IDS.contains(((NPC) event.getActor()).getId()) && event.getHitsplat().getHitsplatType() == HitsplatID.HEAL) {
+            log.debug("found a healing hitsplat for the claw");
             appliedHitsplatsTracker.addHitsplatForRaider(LEFT_CLAW_NAME);
         }
     }
@@ -115,7 +115,8 @@ public class HealDetector extends BaseMistakeDetector {
             Actor interacting = event.getActor().getInteracting();
 
             if (interacting instanceof NPC && LEFT_CLAW_IDS.contains(((NPC) interacting).getId())) {
-                interactingWithHand.add(name);
+                log.debug(name + " is interacting with the left claw");
+                lastInteractedWithHand = (Player) event.getActor();
             }
         }
     }

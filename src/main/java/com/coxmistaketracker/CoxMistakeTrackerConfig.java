@@ -69,22 +69,45 @@ public interface CoxMistakeTrackerConfig extends Config {
     }
 
     @ConfigItem(
-            keyName = "tektonSparksMessage",
+            keyName = "shamansSpawnMessage",
+            name = "Shamans Spawn Explosion",
+            description = "Message to show when hit by the shamans' spawn explosion.",
+            section = roomMistakeSettings,
+            position = 1
+    )
+    default String shamansSpawnMessage() {
+        return CoxMistake.SHAMANS_SPAWN_EXPLOSION.getDefaultMessage();
+    }
+
+    @ConfigItem(
+            keyName = "tektonMeleeMesssage",
+            name = "Tekton Melee",
+            description = "Message to show when hit by tekton's melee attack w/o vengeance up.",
+            section = roomMistakeSettings,
+            position = 2
+    )
+    default String tektonMeleeMesssage() {
+        return CoxMistake.TEKTON_MELEE.getDefaultMessage();
+    }
+
+    @ConfigItem(
+            keyName = "te",
             name = "Tekton Sparks",
             description = "Message to show when hit by tekton's sparks.",
             section = roomMistakeSettings,
-            position = 1
+            position = 3
     )
     default String tektonSparksMessage() {
         return CoxMistake.TEKTON_SPARKS.getDefaultMessage();
     }
+
 
     @ConfigItem(
             keyName = "iceDemonRangedMessage",
             name = "Ice Demon Ranged Hit",
             description = "Message to show when hit by the ice demon's ranged attack w/o vengeance up.",
             section = roomMistakeSettings,
-            position = 2
+            position = 4
     )
     default String iceDemonRangedMessage() {
         return CoxMistake.ICE_DEMON_RANGED.getDefaultMessage();
@@ -95,7 +118,7 @@ public interface CoxMistakeTrackerConfig extends Config {
             name = "Ice Demon Mage Hit",
             description = "Message to show when hit by the ice demon's mage attack w/o vengeance up.",
             section = roomMistakeSettings,
-            position = 3
+            position = 5
     )
     default String iceDemonMageMessage() {
         return CoxMistake.ICE_DEMON_MAGE.getDefaultMessage();
@@ -106,7 +129,7 @@ public interface CoxMistakeTrackerConfig extends Config {
             name = "Vasa Boulder Hit",
             description = "Message to show when hit by vasa's boulder attack w/o vengeance up.",
             section = roomMistakeSettings,
-            position = 4
+            position = 6
     )
     default String vasaBoulderMessage() {
         return CoxMistake.VASA_BOULDER.getDefaultMessage();
@@ -117,7 +140,7 @@ public interface CoxMistakeTrackerConfig extends Config {
             name = "Guardians Boulder Hit",
             description = "Message to show when hit by the guardians falling boulder projectile.",
             section = roomMistakeSettings,
-            position = 5
+            position = 7
     )
     default String guardiansBoulderMessage() {
         return CoxMistake.GUARDIANS_BOULDER.getDefaultMessage();
@@ -128,7 +151,7 @@ public interface CoxMistakeTrackerConfig extends Config {
             name = "Muttadiles Heal",
             description = "Message to show when the muttadiles heal at the meat tree.",
             section = roomMistakeSettings,
-            position = 6
+            position = 8
     )
     default String muttadilesHealMessage() {
         return CoxMistake.SMALL_MUTTADILE_HEAL.getDefaultMessage();
@@ -139,7 +162,7 @@ public interface CoxMistakeTrackerConfig extends Config {
             name = "Vanguards Reset",
             description = "Message to show when the vanguards reset because their HPs did not stay close enough together.",
             section = roomMistakeSettings,
-            position = 7
+            position = 9
     )
     default String vanguardsResetMessage() {
         return CoxMistake.VANGUARDS_RESET.getDefaultMessage();
@@ -150,10 +173,21 @@ public interface CoxMistakeTrackerConfig extends Config {
             name = "Vespula Lux Grub Hatched",
             description = "Message to show when the one of vespula's lux grubs hatches into a vespine soldier.",
             section = roomMistakeSettings,
-            position = 8
+            position = 10
     )
     default String vespulaLuxGrubHatchedMessage() {
         return CoxMistake.VESPULA_LUX_GRUB_HATCHED.getDefaultMessage();
+    }
+
+    @ConfigItem(
+            keyName = "vespulaLuxGrubHitMessage",
+            name = "Vespula Lux Grub Hit",
+            description = "Message to show when the one of vespula's lux gets hit/stung by vespula.",
+            section = roomMistakeSettings,
+            position = 11
+    )
+    default String vespulaLuxGrubHitMessage() {
+        return CoxMistake.VESPULA_LUX_GRUB_HIT.getDefaultMessage();
     }
 
     @ConfigSection(
@@ -242,11 +276,23 @@ public interface CoxMistakeTrackerConfig extends Config {
     }
 
     @ConfigItem(
+            keyName = "olmFlameWallMessage",
+            name = "Olm Flame Wall Damage",
+            description = "Message to show when damaged by staying in the flame wall when it pops.",
+            section = olmMistakeSettings,
+            position = 6
+    )
+    default String olmFlameWallMessage() {
+        return CoxMistake.OLM_FLAME_WALL_DAMAGE.getDefaultMessage();
+    }
+
+
+    @ConfigItem(
             keyName = "olmLeftClawHealMessage",
             name = "Olm Left Claw Healing",
             description = "Message to show when attacking the left claw while the healing special is going on.",
             section = olmMistakeSettings,
-            position = 6
+            position = 7
     )
     default String olmLeftClawHealMessage() {
         return CoxMistake.OLM_LEFT_CLAW_HEAL.getDefaultMessage();
@@ -257,21 +303,21 @@ public interface CoxMistakeTrackerConfig extends Config {
             name = "Olm Claw Reset",
             description = "Message to show when resetting one of the olm's claws by not killing them both at the same time in the last hand phase.",
             section = olmMistakeSettings,
-            position = 7
+            position = 8
     )
     default String olmClawResetMessage() {
         return CoxMistake.OLM_CLAW_RESET.getDefaultMessage();
     }
 
     @ConfigItem(
-            keyName = "olmFallingCrystalBetweenPhasesMessage",
-            name = "Olm Falling Crystal Between Phases",
-            description = "Message to show when hit by a falling crystal in between olm phases.",
+            keyName = "olmFallingCrystalMessage",
+            name = "Olm Falling Crystals",
+            description = "Message to show when hit by a falling crystal outside of the falling crystal attack..",
             section = olmMistakeSettings,
-            position = 8
+            position = 9
     )
-    default String olmFallingCrystalBetweenPhasesMessage() {
-        return CoxMistake.OLM_FALLING_CRYSTAL_BETWEEN_PHASES.getDefaultMessage();
+    default String olmFallingCrystalsMessage() {
+        return CoxMistake.OLM_FALLING_CRYSTALS.getDefaultMessage();
     }
 
     @ConfigItem(
@@ -279,7 +325,7 @@ public interface CoxMistakeTrackerConfig extends Config {
             name = "Olm Falling Crystal Attack",
             description = "Message to show when hit by a falling crystal during the falling crystal attack.",
             section = olmMistakeSettings,
-            position = 9
+            position = 10
     )
     default String olmFallingCrystalAttackMessage() {
         return CoxMistake.OLM_FALLING_CRYSTAL_ATTACK.getDefaultMessage();

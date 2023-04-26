@@ -26,18 +26,23 @@ import java.util.Set;
 public class ShamansDetector extends BaseMistakeDetector {
 
     private static final int GOO_GRAPHICS_OBJECT_ID = 1294;
-    private static final int PROJECTILE_SIZE = 5;
+    private static final int BARNEY_EXPLOSION_OBJECT_ID = 1295;
+    private static final int GOO_SIZE = 5;
+    private static final int BARNEY_EXPLOSION_SIZE = 5;
 
     private final Set<WorldPoint> gooTiles;
+    private final Set<WorldPoint> barneyTiles;
 
     public ShamansDetector() {
         gooTiles = new HashSet<>();
+        barneyTiles = new HashSet<>();
     }
 
 
     @Override
     public void cleanup() {
         gooTiles.clear();
+        barneyTiles.clear();
     }
 
     @Override
@@ -49,6 +54,9 @@ public class ShamansDetector extends BaseMistakeDetector {
     public List<CoxMistake> detectMistakes(@NonNull Raider raider) {
         List<CoxMistake> mistakes = new ArrayList<>();
 
+        if (barneyTiles.contains(raider.getPreviousWorldLocation())) {
+            mistakes.add(CoxMistake.SHAMANS_SPAWN_EXPLOSION);
+        }
         if (gooTiles.contains(raider.getPreviousWorldLocation())) {
             mistakes.add(CoxMistake.SHAMANS_GOO);
         }
@@ -64,13 +72,17 @@ public class ShamansDetector extends BaseMistakeDetector {
     @Override
     public void afterDetect() {
         gooTiles.clear();
+        barneyTiles.clear();
     }
 
     @Subscribe
     public void onGraphicsObjectCreated(GraphicsObjectCreated event) {
         if (event.getGraphicsObject().getId() == GOO_GRAPHICS_OBJECT_ID) {
             WorldPoint graphicsObjectPoint = getWorldPoint(event.getGraphicsObject());
-            gooTiles.addAll(computeNByNTilesFromCenter(graphicsObjectPoint, PROJECTILE_SIZE));
+            gooTiles.addAll(computeNByNTilesFromCenter(graphicsObjectPoint, GOO_SIZE));
+        } else if (event.getGraphicsObject().getId() == BARNEY_EXPLOSION_OBJECT_ID) {
+            WorldPoint graphicsObjectPoint = getWorldPoint(event.getGraphicsObject());
+            barneyTiles.addAll(computeNByNTilesFromCenter(graphicsObjectPoint, BARNEY_EXPLOSION_SIZE));
         }
     }
 }

@@ -10,6 +10,8 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.NPC;
 import net.runelite.api.events.AnimationChanged;
+import net.runelite.api.events.GameTick;
+import net.runelite.api.events.NpcSpawned;
 import net.runelite.client.eventbus.Subscribe;
 
 import javax.inject.Singleton;
@@ -26,17 +28,22 @@ import java.util.Set;
 public class VespulaDetector extends BaseMistakeDetector {
 
     private final static Set<Integer> LUX_GRUB_IDS = ImmutableSet.of(7534, 7535, 7536, 7537);
+    private final static Set<Integer> VESPULA_IDS = ImmutableSet.of(7530, 7531, 7532);
     private final static int LUX_GRUB_HATCH_ANIMATION_ID = 7466;
-    private boolean hatched;
+    private final static int LUX_GRUB_HIT_ANIMATION_ID = 7454;
+    private int hatched;
+    private boolean hit;
 
     public VespulaDetector() {
-        hatched = false;
+        hatched = 0;
+        hit = false;
     }
 
 
     @Override
     public void cleanup() {
-        hatched = false;
+        hatched = 0;
+        hit = false;
     }
 
     @Override
@@ -53,8 +60,11 @@ public class VespulaDetector extends BaseMistakeDetector {
     public List<CoxMistake> detectTeamMistakes() {
         List<CoxMistake> mistakes = new ArrayList<>();
 
-        if (hatched) {
+        for (int i = 0; i < hatched; i++) {
             mistakes.add(CoxMistake.VESPULA_LUX_GRUB_HATCHED);
+        }
+        if (hit) {
+            mistakes.add(CoxMistake.VESPULA_LUX_GRUB_HIT);
         }
 
         return mistakes;
@@ -62,7 +72,8 @@ public class VespulaDetector extends BaseMistakeDetector {
 
     @Override
     public void afterDetect() {
-        hatched = false;
+        hatched = 0;
+        hit = false;
     }
 
     @Subscribe
@@ -71,7 +82,12 @@ public class VespulaDetector extends BaseMistakeDetector {
 
         int npcId = ((NPC) event.getActor()).getId();
         if (LUX_GRUB_IDS.contains(npcId) && event.getActor().getAnimation() == LUX_GRUB_HATCH_ANIMATION_ID) {
-            hatched = true;
+            hatched += 1;
+        }
+
+        if (VESPULA_IDS.contains(npcId) && event.getActor().getAnimation() == LUX_GRUB_HIT_ANIMATION_ID) {
+            hit = true;
         }
     }
+
 }

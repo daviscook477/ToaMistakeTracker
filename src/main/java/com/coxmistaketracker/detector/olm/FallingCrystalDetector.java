@@ -7,10 +7,12 @@ import com.coxmistaketracker.detector.BaseMistakeDetector;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.GraphicsObjectCreated;
 import net.runelite.client.eventbus.Subscribe;
 
+import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -33,6 +35,8 @@ import java.util.Set;
  * graphic, and the huge damage splats, that adding a chat message too won't meaningfully assist players in tackling
  * this game mechanic.
  */
+@Slf4j
+@Singleton
 public class FallingCrystalDetector extends BaseMistakeDetector {
 
     // for some reason I'm pretty sure I've seen both of these ids used
@@ -65,7 +69,7 @@ public class FallingCrystalDetector extends BaseMistakeDetector {
         List<CoxMistake> mistakes = new ArrayList<>();
 
         if (betweenPhasesTiles.contains(raider.getPreviousWorldLocation())) {
-            mistakes.add(CoxMistake.OLM_FALLING_CRYSTAL_BETWEEN_PHASES);
+            mistakes.add(CoxMistake.OLM_FALLING_CRYSTALS);
         }
         if (attackTiles.contains(raider.getPreviousWorldLocation())) {
             mistakes.add(CoxMistake.OLM_FALLING_CRYSTAL_ATTACK);
