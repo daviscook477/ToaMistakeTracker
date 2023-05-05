@@ -19,7 +19,6 @@ import net.runelite.client.eventbus.Subscribe;
 import javax.inject.Singleton;
 import java.util.*;
 
-import static com.coxmistaketracker.CoxMistakeTrackerPlugin.CYCLES_PER_GAME_TICK;
 
 /**
  * Olm's auto attacks cannot be entirely predicted, but they do have a pattern. In particular, the olm

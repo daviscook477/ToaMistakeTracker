@@ -11,9 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
-import net.runelite.api.events.ChatMessage;
-import net.runelite.api.events.GameTick;
-import net.runelite.api.events.NpcSpawned;
+import net.runelite.api.events.*;
 import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.util.Text;
@@ -84,7 +82,7 @@ public class RaidState {
         // after the script can run. Or if the script runs but the relevant players aren't actually in the raid
         // yet for the client to retrieve.
         if (raiders.isEmpty()) {
-            tryLoadRaiders();
+            tryLoadRaiders(true);
         }
     }
 
@@ -103,13 +101,33 @@ public class RaidState {
     }
 
     @Subscribe
+    public void onGameStateChanged(GameStateChanged event) {
+        if (inRaid && event.getGameState() == GameState.LOGGED_IN) {
+            log.debug("Reloading raiders since LOGGED_IN game state change");
+            tryLoadRaiders(false);
+        }
+    }
+
+    @Subscribe
+    public void onPlayerSpawned(PlayerSpawned event) {
+        Player player = event.getPlayer();
+
+        if (player == null) return;
+
+        if (inRaid && raiders.containsKey(player.getName())) {
+            log.debug("Updating raider " + player.getName() + " since the spawned while in raid");
+            raiders.get(player.getName()).setPlayer(player);
+        }
+    }
+
+    @Subscribe
     public void onChatMessage(ChatMessage event) {
         if (event.getType() != ChatMessageType.FRIENDSCHATNOTIFICATION) return;
 
         // When the raid is started we can load the raiders
         String message = Text.removeTags(event.getMessage());
         if (START_RAID_MESSAGE.equals(message)) {
-            tryLoadRaiders();
+            tryLoadRaiders(true);
 
             boolean newInRaid = true;
             if (newInRaid != inRaid) {
@@ -148,7 +166,7 @@ public class RaidState {
         }
     }
 
-    private void tryLoadRaiders() {
+    private void tryLoadRaiders(boolean newRaid) {
         log.debug("Setting raiders");
         raiders.clear();
 
@@ -169,7 +187,9 @@ public class RaidState {
             return;
         }
 
-        log.debug("New raid");
-        eventBus.post(new RaidEntered(ImmutableList.copyOf(raiders.keySet())));
+        if (newRaid) {
+            log.debug("New raid");
+            eventBus.post(new RaidEntered(ImmutableList.copyOf(raiders.keySet())));
+        }
     }
 }

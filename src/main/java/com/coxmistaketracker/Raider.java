@@ -13,8 +13,9 @@ import net.runelite.api.coords.WorldPoint;
 public class Raider {
 
     @Getter
+    @Setter(AccessLevel.PACKAGE)
     @NonNull
-    private final Player player;
+    private Player player;
 
     @Getter
     @Setter(AccessLevel.PACKAGE)

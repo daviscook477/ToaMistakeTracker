@@ -53,9 +53,6 @@ public class SpecialDetector extends BaseMistakeDetector {
     private static final int TELEPORTS_GRAPHICS_OBJECT_ID = 1359;
     private static final int CRYSTALS_EXPLODED_ANIMATION_ID = 1114;
 
-    private static final int TELEPORTS_Y_MIN = 5154;
-    private static final int TELEPORTS_Y_MAX = 5172;
-
     private final static Set<Integer> LEFT_CLAW_IDS = ImmutableSet.of(7552, 7555);
     private final static Set<Integer> RIGHT_CLAW_IDS = ImmutableSet.of(7550, 7553);
 

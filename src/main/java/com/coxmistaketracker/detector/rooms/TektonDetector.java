@@ -5,12 +5,16 @@ import com.coxmistaketracker.RaidRoom;
 import com.coxmistaketracker.Raider;
 import com.coxmistaketracker.detector.BaseMistakeDetector;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.HitsplatID;
+import net.runelite.api.NPC;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.GraphicsObjectCreated;
 import net.runelite.api.events.HitsplatApplied;
+import net.runelite.api.events.NpcDespawned;
+import net.runelite.api.events.NpcSpawned;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.util.Text;
 
@@ -29,14 +33,18 @@ import java.util.*;
 public class TektonDetector extends BaseMistakeDetector {
 
     private static final int SPARK_GRAPHICS_OBJECT_ID = 659;
+    private static final Set<Integer> TEKTON_IDS = ImmutableSet.of(7540, 7541, 7542, 7543, 7544, 7545);
+    private static final Set<Integer> TEKTON_ATTACK_ANIMATION_IDS = ImmutableSet.of(7492, 7493, 7494);
 
     private final Set<WorldPoint> sparkTiles;
     // name -> list of hitsplat amounts
     private final Map<String, List<Integer>> appliedHitsplats;
+    private NPC tekton;
 
     public TektonDetector() {
         sparkTiles = new HashSet<>();
         appliedHitsplats = new HashMap<>();
+        tekton = null;
     }
 
 
@@ -44,6 +52,7 @@ public class TektonDetector extends BaseMistakeDetector {
     public void cleanup() {
         sparkTiles.clear();
         appliedHitsplats.clear();
+        tekton = null;
     }
 
     @Override
@@ -88,6 +97,23 @@ public class TektonDetector extends BaseMistakeDetector {
         appliedHitsplats.clear();
     }
 
+    @Subscribe
+    public void onNpcSpawned(NpcSpawned event) {
+        if (event.getNpc() == null) return;
+
+        if (TEKTON_IDS.contains(event.getNpc().getId())) {
+            tekton = event.getNpc();
+        }
+    }
+
+    @Subscribe
+    public void onNpcDespawned(NpcDespawned event) {
+        if (event.getNpc() == null) return;
+
+        if (TEKTON_IDS.contains(event.getNpc().getId())) {
+            tekton = null;
+        }
+    }
 
     @Subscribe
     public void onHitsplatApplied(HitsplatApplied event) {
@@ -97,8 +123,10 @@ public class TektonDetector extends BaseMistakeDetector {
         if (raidState.isRaider(event.getActor())) {
             if (isDamageHitsplat(event.getHitsplat().getHitsplatType()) &&
                     event.getHitsplat().getAmount() > 0) {
-                appliedHitsplats.computeIfAbsent(name, k -> new ArrayList<>())
-                        .add(event.getHitsplat().getAmount());
+                if (tekton != null && TEKTON_ATTACK_ANIMATION_IDS.contains(tekton.getAnimation())) {
+                    appliedHitsplats.computeIfAbsent(name, k -> new ArrayList<>())
+                            .add(event.getHitsplat().getAmount());
+                }
             }
         }
     }

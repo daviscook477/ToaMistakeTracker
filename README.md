@@ -83,13 +83,26 @@ Need to check
 
 * why isn't the teleport damage mistake being tracked right?
 * what is the vespula grub sting animation id? is it unique to the grub stinging -> yes it worked!!!
-* flame wall detection logic (some number of ticks) 5809 appeared 5816 disappeared
-* olm auto mistake detection
+
+
 * **Olm standard attack** non-jad prayer miss (no announcement) 1339p mage - 1340p range
 * shaman barney 1295 gfx obj it really is in a 5x5 around them not just a 3x3 -> yes it really is.
 * ok the vespula grub sting animation is not sufficient. it *can* do that animation after stinging.
 * I should check for the combination of vespula sting + grub hp ratio b/c just the sting animation is not enough.
 
+Some more things to fix:
+
+todo list:
+* melee hits from scavs (non-venge)
+* fix the tekton melee hit detection to not overlap with sparks and the entry flame
+* verify if the spawns at the end of the shamans room count correctly for the explosion mistake
+* reloading players just when the game state changes from loading isn't sufficient since it misses all players that go down after you
+* to be honest, probably reloading players at each game state change + replacing on spawn might work
+* flame wall detection logic (some number of ticks) 5809 appeared 5816 disappeared
+* figure out what happened to teleports -> I think it's some sort of animation on the player
+* if the user logs out and logs back into the raid we want to consider the raid as started again
+
+lightning 1359 g on the 
 
 Team mistakes:
 * muttadile heal (big and small)
@@ -106,7 +119,7 @@ Are these done correctly?
   going to need to figure out a different way to determine which player is healing the hand
 * **Olm mage hand** reset 29884id
 * **Olm melee hand** reset
-
+* olm auto mistake detection
 
 
 1114a
